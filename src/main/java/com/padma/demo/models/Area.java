@@ -7,18 +7,26 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "areas")
 public class Area {
-  @Id
-    private String id;
-    
+    @Id
+    private String area_id;
+
+    @Column(name="name", nullable = false)
     private String name;
+
+    @Column(name="description")
     private String description;
 
-    //un área puede tener muchos hábitos
-      @OneToMany(mappedBy = "area", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Habit> habits = new ArrayList<>();
+    @OneToMany(mappedBy = "area", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Habit> habits = new ArrayList<>(); // Agregación: un área puede contener muchos hábitos
 
-    public Area(String id, String name) {
-        this.id = id;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private Usuario users;  //Muchas áreas pueden pertenecer a un usuario
+
+    
+
+    public Area(String area_id, String name) {
+        this.area_id= area_id;
         this.name = name;
     }
 
@@ -39,7 +47,7 @@ public class Area {
         return name;
     }
 
-    public String getId() {
-        return id;
+    public String getArea_id() {
+        return area_id;
     }
 }

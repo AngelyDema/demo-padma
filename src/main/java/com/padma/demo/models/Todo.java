@@ -2,7 +2,7 @@ package com.padma.demo.models;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Comparator;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "todos")
@@ -11,35 +11,58 @@ public class Todo {
     //Atributos
     
     @Id
-    private String id;
+    private String todo_id;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private Usuario user; //Muchos to-dos pueden pertenecer a un usuario
 
+    @ManyToOne
+    @JoinColumn(name = "list_todo_id")
+    private ListTodo listTodo; //Muchos to-dos pueden pertenecer a una lista de to-dos
+
+    @Column(name="title", nullable = false)
     private String title;
+
+    @Column(name="description")
     private String description;
+
+    @Column(name="completed")
     private boolean completed;
+
+    @Column(name="priority")
     private String priority;
+
+    @Column(name="due_date")
     private LocalDate dueDate;
-    private LocalDate createdAt;
+
+    @Column(name="created_at", nullable = false)
+    private LocalDate createdAt = LocalDate.now();
+    
+    @Column(name="completed_at")
     private LocalDate completedAt;
 
     //Constructor
-    public Todo(String id, Usuario user, String title, String description, String priority, LocalDate dueDate) {
-        this.id = id;
+    protected Todo() {}
+
+    public Todo(String todo_id, Usuario user, String title, String description, String priority, LocalDate dueDate, boolean completed) {
+        this.todo_id = todo_id;
         this.user = user;
         this.title = title;
         this.description = description;
         this.priority = priority;
         this.dueDate = dueDate;
-        this.createdAt = LocalDate.now();
         this.completed = false;
     }
 
+
+
     //Getters y Setters
-    public String getId() {
-        return id;
+    public String getTodo_Id() {
+        return todo_id;
     }
-    public void setId(String id) {
-        this.id = id;
+    public void setId(String todo_id) {
+        this.todo_id = todo_id;
     }
     public Usuario getUser() {
         return user;
@@ -47,6 +70,7 @@ public class Todo {
     public void setUser(Usuario user) {
         this.user = user;
     }
+    
     public String getTitle() {
         return title;
     }
