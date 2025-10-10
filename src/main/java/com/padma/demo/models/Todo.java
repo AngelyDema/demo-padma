@@ -12,8 +12,8 @@ public class Todo {
     
     @Id
     private String id;
-    @ManyToOne
-    private Usuario user;
+
+
     private String title;
     private String description;
     private boolean completed;
@@ -34,29 +34,58 @@ public class Todo {
         this.completed = false;
     }
 
-    public void markAsCompleted() {
-    this.completed = true;
-    this.completedAt = LocalDate.now();
-}
-
-private static int prioridadValue(String prioridad) {
-        if (prioridad == null) return Integer.MAX_VALUE;
-        switch(prioridad.toLowerCase()) {
-            case "high": return 1;
-            case "medium": return 2;
-            case "low": return 3;
-            default: return Integer.MAX_VALUE;
-        }
+    //Getters y Setters
+    public String getId() {
+        return id;
     }
-
-    // Ordena la lista por prioridad
-    public static void sortByPriority(List<Todo> todos) {
-        todos.sort(Comparator.comparingInt(todo -> prioridadValue(todo.getPriority())));
+    public void setId(String id) {
+        this.id = id;
     }
-
-    // Getters y Setters
+    public Usuario getUser() {
+        return user;
+    }
+    public void setUser(Usuario user) {
+        this.user = user;
+    }
+    public String getTitle() {
+        return title;
+    }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public boolean isCompleted() {
+        return completed;
+    }
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
     public String getPriority() {
-        return this.priority;
+        return priority;
     }
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+    public LocalDate getCompletedAt() {
+        return completedAt;
+    }
+    public void setCompletedAt(LocalDate completedAt) {
+        this.completedAt = completedAt;
+    }
+    
 }
 

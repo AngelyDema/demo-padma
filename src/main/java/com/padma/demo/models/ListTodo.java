@@ -2,13 +2,24 @@ package com.padma.demo.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "listtodos")
 public class ListTodo {
 
+    //Atributos
+@Id
     private String id;
+
     private String name;
+    private String description;
 
     // Agregación: una lista puede contener muchas tareas
+
+    @OneToMany(mappedBy = "listTodo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Todo> todos = new ArrayList<>();
 
     public ListTodo(String id, String name) {

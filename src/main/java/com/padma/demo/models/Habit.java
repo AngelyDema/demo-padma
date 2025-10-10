@@ -3,7 +3,7 @@ import java.time.LocalDate;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import com.padma.demo.services.HabitServices;
+import com.padma.demo.models.HabitHistory;
 
 @Entity
 @Table(name = "habits")
@@ -12,44 +12,40 @@ import com.padma.demo.services.HabitServices;
      //Atributos
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
-    @ManyToOne
-    private Usuario user;
-
-    private String name;
+    private String title;
     private String description;
     private String frequency;
     private LocalDate createdAt;
     private boolean completed;
-    private int streak;
+    private int goal; //elegida por el usuario, está definida por cierta cantidad de rachas (días completados cierto hábito)
 
     @OneToMany(mappedBy = "habit", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<HabitServices> completions = new ArrayList<>();
+    private List<HabitHistory> completionsDates = new ArrayList<>();
 
-    public Habit(String id, Usuario user, String name, String description, String color, String frequency) {
+    public Habit(String id, Usuario user, String title, String description, String color, String frequency, int goal) {
         this.id = id;
         this.user = user;
-        this.name = name;
+        this.title = title;
         this.description = description;
         this.frequency = frequency;
         this.createdAt = LocalDate.now();
         this.completed = false;
-        this.streak = 0;
-    }
+        this.goal = goal;}
 
     // Getters y Setters
     public String getId() { return id; }
     public Usuario getUser() { return user; }
-    public String getName() { return name; }
+    public String getTitle() { return title; }
     public String getDescription() { return description; }
     public String getFrequency() { return frequency; }
     public LocalDate getCreatedAt() { return createdAt; }
     public boolean isCompleted() { return completed; }
     public int getStreak() { return streak; }
     public void setCompleted(boolean completed) { this.completed = completed; }
-    public void setStreak(int streak) { this.streak = streak; }
+    public int getGoal() { return goal; }
+    public void setGoal(int goal) { this.goal = goal; }
 
     public List<HabitServices> getCompletions() {
         return completions;
@@ -57,7 +53,7 @@ import com.padma.demo.services.HabitServices;
 
     public void addCompletion(HabitServices completion) {
         completions.add(completion);
-        completion.setHabit(this); // importancia para mantener consistencia bidireccional
+        completion.setHabit(this); 
     }
 
     public void removeCompletion(HabitServices completion) {
