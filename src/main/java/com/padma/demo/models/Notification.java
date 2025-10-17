@@ -13,7 +13,7 @@ public class Notification {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Usuario user;
+    private Usuario users;
 
     @Column(name="messages")
     private String message;
@@ -26,7 +26,7 @@ public class Notification {
 
     @ManyToOne
     @JoinColumn(name = "habit_id")
-    private Habit habit;  // referencia al hábito asociado a la notificación
+    private Habit habits;  // referencia al hábito asociado a la notificación
 
     public Notification() {
         this.read = false;
@@ -34,7 +34,7 @@ public class Notification {
     }
 
     public Notification(Usuario user, String message) {
-        this.user = user;
+        this.users = users;
         this.message = message;
         this.read = false;
         this.timestamp = LocalDateTime.now();
@@ -44,8 +44,8 @@ public class Notification {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public Usuario getUser() { return user; }
-    public void setUser(Usuario user) { this.user = user; }
+    public Usuario getUser() { return users; }
+    public void setUser(Usuario user) { this.users = user; }
 
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }

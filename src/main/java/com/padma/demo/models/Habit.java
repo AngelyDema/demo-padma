@@ -39,7 +39,9 @@ import java.util.List;
 
     @ManyToOne
     @JoinColumn(name = "area_id")
-    private Area area;  //Muchos hábitos pueden pertenecer a un área
+    private Area areas;  //Muchos hábitos pueden pertenecer a un área
+
+    public Habit() {}
 
     public Habit(String  habit_id, Usuario user, String title, String description, String color, String frequency, int goal) {
         this. habit_id =  habit_id;

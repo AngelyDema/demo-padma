@@ -16,14 +16,14 @@ public class Area {
     @Column(name="description")
     private String description;
 
-    @OneToMany(mappedBy = "area", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "areas", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Habit> habits = new ArrayList<>(); // Agregación: un área puede contener muchos hábitos
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private Usuario users;  //Muchas áreas pueden pertenecer a un usuario
 
-    
+    public Area() {} 
 
     public Area(String area_id, String name) {
         this.area_id= area_id;

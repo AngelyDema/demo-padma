@@ -15,11 +15,11 @@ public class Todo {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Usuario user; //Muchos to-dos pueden pertenecer a un usuario
+    private Usuario users; //Muchos to-dos pueden pertenecer a un usuario
 
     @ManyToOne
     @JoinColumn(name = "list_todo_id")
-    private ListTodo listTodo; //Muchos to-dos pueden pertenecer a una lista de to-dos
+    private ListTodo list_todos; //Muchos to-dos pueden pertenecer a una lista de to-dos
 
     @Column(name="title", nullable = false)
     private String title;
@@ -47,7 +47,7 @@ public class Todo {
 
     public Todo(String todo_id, Usuario user, String title, String description, String priority, LocalDate dueDate, boolean completed) {
         this.todo_id = todo_id;
-        this.user = user;
+        this.users = user;
         this.title = title;
         this.description = description;
         this.priority = priority;
@@ -65,10 +65,10 @@ public class Todo {
         this.todo_id = todo_id;
     }
     public Usuario getUser() {
-        return user;
+        return users;
     }
     public void setUser(Usuario user) {
-        this.user = user;
+        this.users = user;
     }
     
     public String getTitle() {

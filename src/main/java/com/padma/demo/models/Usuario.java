@@ -23,7 +23,7 @@ public class Usuario {
     @Column(name="name")
     private String name;
 
-    @Column(name="email")
+    @Column(name="email", unique = true, nullable= false)
     private String email;
 
     @Column(name="last_name")
@@ -41,12 +41,13 @@ public class Usuario {
     private List<Todo> todos = new ArrayList<>();
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ListTodo> listTodos = new ArrayList<>();
+    private List<ListTodo> listTodo = new ArrayList<>();
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
 private List<Notification> notifications = new ArrayList<>();
 
     //Constructor
+    
     public Usuario() { }
     public Usuario(String user_id, String name, String email, String lastname, String password) {
         this.user_id = user_id;
