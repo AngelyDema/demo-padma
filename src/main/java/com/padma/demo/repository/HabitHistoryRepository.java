@@ -13,6 +13,6 @@ public interface HabitHistoryRepository extends JpaRepository<HabitHistory, Stri
 
     List<HabitHistory> findByHabit(String habits);
 
-    Optional<HabitHistory> findByHabitAndCreatedDate(String habits, LocalDate createdAt);
-    Optional<HabitHistory> findByHabitAndCompletionDate(String habits, LocalDate completionDates);
+    Optional<HabitHistory> findByHabitAndCreatedAt(String habits, LocalDate createdAt);
+    Optional<HabitHistory> findByHabitAndCompletionDates(String habit, LocalDate completionDates);
     }

@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NotificationsRepository extends JpaRepository<Notification, String> {
 
-    List<Notification> findByUser_Id(String users);
-    List<Notification> findByUser_IdAndReadFalse(String users);
+    List<Notification> findByUsers(String users);
+    List<Notification> findByUsersAndReadFalse(String users);
 }

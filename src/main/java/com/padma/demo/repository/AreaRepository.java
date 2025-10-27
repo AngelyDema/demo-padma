@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface AreaRepository extends JpaRepository<Area, String> {
 
     List<Area> findByNameIgnoreCase(String name);
-    List<Area> findByUser_id(String users);
+    List<Area> findByUsers(String users);
 
 }

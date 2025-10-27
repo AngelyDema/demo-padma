@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface HabitRepository extends JpaRepository<Habit, String> {
 
-    List<Habit> findAllByUser_id(String users);  //Encontrar referencias por id de user
-    List<Habit> findAllByAreaHabitId( String areas); //Lo mismo pero por área
+    List<Habit> findAllByUsers(String users);  //Encontrar referencias por id de user
+    List<Habit> findAllByAreas( String areas); //Lo mismo pero por área
 
 }
