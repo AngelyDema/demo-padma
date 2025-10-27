@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ListTodoRepository extends JpaRepository<ListTodo, String> {
 
-    List<ListTodo> findByUserId(String user_id);
+    List<ListTodo> findByUserId(String users);
     List<ListTodo> findByTituloContainingIgnoreCase(String name);
 }

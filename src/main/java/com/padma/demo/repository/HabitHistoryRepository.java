@@ -11,8 +11,8 @@ import java.util.Optional;
 @Repository
 public interface HabitHistoryRepository extends JpaRepository<HabitHistory, String> {
 
-    List<HabitHistory> findByHabit(String habit_id);
+    List<HabitHistory> findByHabit(String habits);
 
-    Optional<HabitHistory> findByHabitAndCreatedDate(String habit_id, LocalDate createdAt);
-    Optional<HabitHistory> findByHabitAndCompletionDate(String habit_id, LocalDate completionDates);
+    Optional<HabitHistory> findByHabitAndCreatedDate(String habits, LocalDate createdAt);
+    Optional<HabitHistory> findByHabitAndCompletionDate(String habits, LocalDate completionDates);
     }
