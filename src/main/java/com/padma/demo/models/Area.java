@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "areas")
 public class Area {
+    
     @Id
     private String area_id;
 
@@ -21,7 +22,7 @@ public class Area {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Usuario users;  //Muchas áreas pueden pertenecer a un usuario
+    private User users;  //Muchas áreas pueden pertenecer a un usuario
 
     public Area() {} 
 

@@ -14,7 +14,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class Usuario {
+public class User {
 	
     //Atributos
     @Id
@@ -30,7 +30,7 @@ public class Usuario {
     private String lastname;
     private String password;
 
-    // Agregación: un usuario puede tener muchas áreas, hábitos, to-dos y listas de to-dos
+    // Agregación: un User puede tener muchas áreas, hábitos, to-dos y listas de to-dos
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Area> areas = new ArrayList<>();
 
@@ -48,8 +48,8 @@ private List<Notification> notifications = new ArrayList<>();
 
     //Constructor
     
-    public Usuario() { }
-    public Usuario(String user_id, String name, String email, String lastname, String password) {
+    public User() { }
+    public User(String user_id, String name, String email, String lastname, String password) {
         this.user_id = user_id;
         this.name = name;
         this.email = email;

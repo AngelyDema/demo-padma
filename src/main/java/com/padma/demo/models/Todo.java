@@ -15,7 +15,7 @@ public class Todo {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Usuario users; //Muchos to-dos pueden pertenecer a un usuario
+    private User users; //Muchos to-dos pueden pertenecer a un User
 
     @ManyToOne
     @JoinColumn(name = "list_todo_id")
@@ -45,7 +45,7 @@ public class Todo {
     //Constructor
     protected Todo() {}
 
-    public Todo(String todo_id, Usuario user, String title, String description, String priority, LocalDate dueDate, boolean completed) {
+    public Todo(String todo_id, User user, String title, String description, String priority, LocalDate dueDate, boolean completed) {
         this.todo_id = todo_id;
         this.users = user;
         this.title = title;
@@ -64,10 +64,10 @@ public class Todo {
     public void setId(String todo_id) {
         this.todo_id = todo_id;
     }
-    public Usuario getUser() {
+    public User getUser() {
         return users;
     }
-    public void setUser(Usuario user) {
+    public void setUser(User user) {
         this.users = user;
     }
     
@@ -110,6 +110,17 @@ public class Todo {
     public void setCompletedAt(LocalDate completedAt) {
         this.completedAt = completedAt;
     }
+
+    public void setList_todo(ListTodo listTodo) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setCreatedAt(LocalDate now) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object getList_todo() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }
-

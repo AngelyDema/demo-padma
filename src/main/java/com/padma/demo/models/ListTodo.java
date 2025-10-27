@@ -32,19 +32,19 @@ public class ListTodo {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Usuario users; //Muchas listas de to-dos pueden pertenecer a un usuario
+    private User users; //Muchas listas de to-dos pueden pertenecer a un usuario
 
     public ListTodo() {}
 
-    public ListTodo(String list_todo_id, String name) {
+    public ListTodo(String list_todo_id, String name, String description) {
         this.list_todo_id = list_todo_id;
         this.name = name;
+        this.description=description;
     }
 
     public void addTodo(Todo todo) {
         todos.add(todo);
     }
-
     public void removeTodo(Todo todo) {
         todos.remove(todo);
     }
@@ -60,5 +60,20 @@ public class ListTodo {
 
     public String getList_todo_id() {
         return list_todo_id;
+    }
+
+    public void setName(String name) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public User getUser() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    public String getDescription(){
+        return description;
+    }
+
+    public void setDescription(String description){
+        this.description=description;
     }
 }

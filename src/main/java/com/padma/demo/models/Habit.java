@@ -28,14 +28,14 @@ import java.util.List;
     @Column(name="completed", nullable = false)
     private boolean completed;
     @Column(name="goal")
-    private int goal; //elegida por el usuario, está definida por cierta cantidad de rachas (días completados cierto hábito)
+    private int goal; //elegida por el User, está definida por cierta cantidad de rachas (días completados cierto hábito)
 
     @OneToOne(mappedBy = "habit", cascade = CascadeType.ALL)
     private HabitHistory habitHistory;   //Relación uno a uno con HabitHistory
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Usuario users;  //Muchos hábitos pueden pertenecer a un usuario
+    private User users;  //Muchos hábitos pueden pertenecer a un User
 
     @ManyToOne
     @JoinColumn(name = "area_id")
@@ -43,7 +43,7 @@ import java.util.List;
 
     public Habit() {}
 
-    public Habit(String  habit_id, Usuario user, String title, String description, String color, String frequency, int goal) {
+    public Habit(String  habit_id, User user, String title, String description, String color, String frequency, int goal) {
         this. habit_id =  habit_id;
         this.title = title;
         this.description = description;
@@ -62,6 +62,22 @@ import java.util.List;
     public void setCompleted(boolean completed) { this.completed = completed; }
     public int getGoal() { return goal; }
     public void setGoal(int goal) { this.goal = goal; }
+
+    public void setCurrentStreak(int currentStreak) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setLongestStreak(int currentStreak) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int getLongestStreak() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setArea(Area areas) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 }
     

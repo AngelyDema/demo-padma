@@ -13,7 +13,7 @@ public class Notification {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Usuario users;
+    private User users;
 
     @Column(name="messages")
     private String message;
@@ -33,8 +33,8 @@ public class Notification {
         this.timestamp = LocalDateTime.now();
     }
 
-    public Notification(Usuario user, String message) {
-        this.users = users;
+    public Notification(User user, String message) {
+        this.users = user;
         this.message = message;
         this.read = false;
         this.timestamp = LocalDateTime.now();
@@ -44,8 +44,8 @@ public class Notification {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public Usuario getUser() { return users; }
-    public void setUser(Usuario user) { this.users = user; }
+    public User getUser() { return users; }
+    public void setUser(User user) { this.users = user; }
 
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
@@ -55,4 +55,12 @@ public class Notification {
 
     public LocalDateTime getTime() { return timestamp; }
     public void setTime(LocalDateTime time) { this.timestamp = time; }
+
+    public void setTimestamp(LocalDateTime now) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setHabit(Habit habit) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
