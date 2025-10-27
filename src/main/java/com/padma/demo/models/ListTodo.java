@@ -2,23 +2,24 @@ package com.padma.demo.models;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "list_todos")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ListTodo {
 
     //Atributos
+
 @Id
-    private String list_todo_id;
+@Column(name="list_todo_id", nullable = false)
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long listTodoId;
 
     @Column(name="names", nullable = false)
     private String name;
@@ -26,54 +27,12 @@ public class ListTodo {
     @Column(name="descriptions")
     private String description;
 
-    // Agregación: una lista puede contener muchas tareas
-    @OneToMany(mappedBy = "list_todos", cascade = CascadeType.ALL, orphanRemoval = true)
+    // Agregación una lista puede contener muchas tareas
+    @OneToMany(mappedBy = "listTodos", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Todo> todos = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User users; //Muchas listas de to-dos pueden pertenecer a un usuario
 
-    public ListTodo() {}
-
-    public ListTodo(String list_todo_id, String name, String description) {
-        this.list_todo_id = list_todo_id;
-        this.name = name;
-        this.description=description;
-    }
-
-    public void addTodo(Todo todo) {
-        todos.add(todo);
-    }
-    public void removeTodo(Todo todo) {
-        todos.remove(todo);
-    }
-
-    // Getters y setters
-    public List<Todo> getTodos() {
-        return todos;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getList_todo_id() {
-        return list_todo_id;
-    }
-
-    public void setName(String name) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public User getUser() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    public String getDescription(){
-        return description;
-    }
-
-    public void setDescription(String description){
-        this.description=description;
-    }
 }

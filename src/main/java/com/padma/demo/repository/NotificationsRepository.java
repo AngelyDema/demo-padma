@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface NotificationsRepository extends JpaRepository<Notification, String> {
+public interface NotificationsRepository extends JpaRepository<Notification, Long> {
 
-    List<Notification> findByUsers(String users);
-    List<Notification> findByUsersAndReadFalse(String users);
+    List<Notification> findByUsers(Long users);
+    List<Notification> findByUsersAndReadFalse(Long users);
 }

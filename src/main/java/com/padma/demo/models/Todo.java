@@ -3,15 +3,23 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "todos")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Todo {
 	
     //Atributos
     
     @Id
-    private String todo_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="todo_id", nullable = false)
+    private Long todoId;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -19,10 +27,10 @@ public class Todo {
 
     @ManyToOne
     @JoinColumn(name = "list_todo_id")
-    private ListTodo list_todos; //Muchos to-dos pueden pertenecer a una lista de to-dos
+    private ListTodo listTodos; //Muchos to-dos pueden pertenecer a una lista de to-dos
 
-    @Column(name="title", nullable = false)
-    private String title;
+    @Column(name="name", nullable = false)
+    private String name;
 
     @Column(name="description")
     private String description;
@@ -42,85 +50,5 @@ public class Todo {
     @Column(name="completed_at")
     private LocalDate completedAt;
 
-    //Constructor
-    protected Todo() {}
-
-    public Todo(String todo_id, User user, String title, String description, String priority, LocalDate dueDate, boolean completed) {
-        this.todo_id = todo_id;
-        this.users = user;
-        this.title = title;
-        this.description = description;
-        this.priority = priority;
-        this.dueDate = dueDate;
-        this.completed = false;
-    }
-
-
-
-    //Getters y Setters
-    public String getTodo_Id() {
-        return todo_id;
-    }
-    public void setId(String todo_id) {
-        this.todo_id = todo_id;
-    }
-    public User getUser() {
-        return users;
-    }
-    public void setUser(User user) {
-        this.users = user;
-    }
-    
-    public String getTitle() {
-        return title;
-    }
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    public String getDescription() {
-        return description;
-    }
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    public boolean isCompleted() {
-        return completed;
-    }
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
-    }
-    public String getPriority() {
-        return priority;
-    }
-    public void setPriority(String priority) {
-        this.priority = priority;
-    }
-    public LocalDate getDueDate() {
-        return dueDate;
-    }
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
-    }
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
-    public LocalDate getCompletedAt() {
-        return completedAt;
-    }
-    public void setCompletedAt(LocalDate completedAt) {
-        this.completedAt = completedAt;
-    }
-
-    public void setList_todo(ListTodo listTodo) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void setCreatedAt(LocalDate now) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public Object getList_todo() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
     
 }

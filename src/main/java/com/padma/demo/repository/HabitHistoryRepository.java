@@ -14,5 +14,5 @@ public interface HabitHistoryRepository extends JpaRepository<HabitHistory, Stri
     List<HabitHistory> findByHabit(String habits);
 
     Optional<HabitHistory> findByHabitAndCreatedAt(String habits, LocalDate createdAt);
-    Optional<HabitHistory> findByHabitAndCompletionDates(String habit, LocalDate completionDates);
+    Optional<HabitHistory> findByHabitAndCompletionDates(String habits, LocalDate completionDates);
     }

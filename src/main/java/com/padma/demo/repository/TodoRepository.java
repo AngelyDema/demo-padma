@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TodoRepository extends JpaRepository<Todo, String> {
-    List<Todo> findAllByUsersAndCompletedFalse(String users); //Por usuario y si no está "done"
-    List<Todo> findAllByUsersAndCompletedTrue(String users);
+    List<Todo> findAllByUsersAndCompletedFalse(Long users); //Por usuario y si no está "done"
+    List<Todo> findAllByUsersAndCompletedTrue(Long users);
     
 }
 

@@ -1,17 +1,26 @@
 package com.padma.demo.models;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import java.time.LocalDate;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import com.padma.demo.models.HabitHistory;
 
 @Entity
 @Table(name = "habits")
+@Data // genera getters, setters, toString, equals, hashCode
+@NoArgsConstructor // constructor vacío
+@AllArgsConstructor // constructor con todos los campos
     public class Habit {
 
      //Atributos
     
     @Id
-    private String habit_id;
+    @Column(name="habit_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long habitId;
     
     @Column(name="title", nullable = false)
     private String title;
@@ -41,43 +50,6 @@ import java.util.List;
     @JoinColumn(name = "area_id")
     private Area areas;  //Muchos hábitos pueden pertenecer a un área
 
-    public Habit() {}
-
-    public Habit(String  habit_id, User user, String title, String description, String color, String frequency, int goal) {
-        this. habit_id =  habit_id;
-        this.title = title;
-        this.description = description;
-        this.frequency = frequency;
-        this.createdAt = LocalDate.now();
-        this.completed = false;
-        this.goal = goal;}
-
-    // Getters y Setters
-    public String getHabit_id() { return  habit_id; }
-    public String getTitle() { return title; }
-    public String getDescription() { return description; }
-    public String getFrequency() { return frequency; }
-    public LocalDate getCreatedAt() { return createdAt; }
-    public boolean isCompleted() { return completed; }
-    public void setCompleted(boolean completed) { this.completed = completed; }
-    public int getGoal() { return goal; }
-    public void setGoal(int goal) { this.goal = goal; }
-
-    public void setCurrentStreak(int currentStreak) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void setLongestStreak(int currentStreak) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public int getLongestStreak() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void setArea(Area areas) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
 }
     
