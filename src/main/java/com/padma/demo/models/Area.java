@@ -6,11 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.*;
 
-@Entity
-@Table(name = "areas")
 @Data // genera getters, setters, toString, equals, hashCode
 @NoArgsConstructor // constructor vacío
 @AllArgsConstructor // constructor con todos los campos
+@Entity
+@Table(name = "areas")
+
 public class Area {
     
     @Id

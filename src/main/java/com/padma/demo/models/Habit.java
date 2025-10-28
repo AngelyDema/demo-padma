@@ -8,11 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import com.padma.demo.models.HabitHistory;
 
-@Entity
-@Table(name = "habits")
 @Data // genera getters, setters, toString, equals, hashCode
 @NoArgsConstructor // constructor vacío
 @AllArgsConstructor // constructor con todos los campos
+@Entity
+@Table(name = "habits")
+
     public class Habit {
 
      //Atributos
@@ -28,14 +29,15 @@ import com.padma.demo.models.HabitHistory;
     @Column(name="description")
     private String description;
 
-    @Column(name="frequencies")
-    private String frequency;
-
     @Column(name="created_at", nullable = false)
     private LocalDate createdAt;
 
     @Column(name="completed", nullable = false)
     private boolean completed;
+
+    @Column(name="note", nullable = false)
+    private String note;
+
     @Column(name="goal")
     private int goal; //elegida por el User, está definida por cierta cantidad de rachas (días completados cierto hábito)
 

@@ -21,9 +21,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    // ============================
-    // 1️⃣ Registrar usuario nuevo
-    // ============================
+    
+    // Registrar usuario nuevo
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody Map<String, String> request) {
         try {

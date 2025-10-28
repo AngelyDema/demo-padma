@@ -6,8 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ListTodoRepository extends JpaRepository<ListTodo, String> {
+public interface ListTodoRepository extends JpaRepository<ListTodo, Long> {
 
     List<ListTodo> findByUsers(Long users);
+
     List<ListTodo> findByNameContainingIgnoreCase(String name);
 }

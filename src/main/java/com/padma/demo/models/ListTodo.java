@@ -7,11 +7,12 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import jakarta.persistence.*;
 
-@Entity
-@Table(name = "list_todos")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "list_todos")
+
 public class ListTodo {
 
     //Atributos
