@@ -1,4 +1,5 @@
 package com.padma.demo.models;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -14,47 +15,43 @@ import com.padma.demo.models.HabitHistory;
 @Entity
 @Table(name = "habits")
 
-    public class Habit {
+public class Habit {
 
-     //Atributos
-    
+    // Atributos
+
     @Id
-    @Column(name="habit_id", nullable = false)
+    @Column(name = "habit_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long habitId;
-    
-    @Column(name="title", nullable = false)
+
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name="description")
+    @Column(name = "description")
     private String description;
 
-    @Column(name="created_at", nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDate createdAt;
 
-    @Column(name="completed", nullable = false)
+    @Column(name = "completed", nullable = false)
     private boolean completed;
 
-    @Column(name="note", nullable = false)
+    @Column(name = "note")
     private String note;
 
-    @Column(name="goal")
-    private int goal; //elegida por el User, está definida por cierta cantidad de rachas (días completados cierto hábito)
+    @Column(name = "goal")
+    private int goal; // elegida por el User, está definida por cierta cantidad de rachas (días
+                      // completados cierto hábito)
 
     @OneToOne(mappedBy = "habit", cascade = CascadeType.ALL)
-    private HabitHistory habitHistory;   //Relación uno a uno con HabitHistory
+    private HabitHistory habitHistory; // Relación uno a uno con HabitHistory
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User users;  //Muchos hábitos pueden pertenecer a un User
+    private User users; // Muchos hábitos pueden pertenecer a un User
 
     @ManyToOne
     @JoinColumn(name = "area_id")
-    private Area areas;  //Muchos hábitos pueden pertenecer a un área
-
+    private Area areas; // Muchos hábitos pueden pertenecer a un área
 
 }
-    
-
-
-

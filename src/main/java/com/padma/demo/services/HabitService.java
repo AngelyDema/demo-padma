@@ -12,6 +12,7 @@ import com.padma.demo.models.HabitHistory;
 import com.padma.demo.repository.HabitHistoryRepository;
 import com.padma.demo.services.HabitHistoryService;
 import com.padma.demo.services.HabitCompletionService;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -50,6 +51,10 @@ public class HabitService {
 
         if (habit.getDescription() == null) {
             habit.setDescription("Habit without description");
+        }
+
+        if (habit.getCreatedAt() == null) {
+            habit.setCreatedAt(java.time.LocalDate.now());
         }
 
         habit.setCompleted(false); // por defecto no está completado al crear
