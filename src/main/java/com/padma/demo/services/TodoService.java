@@ -9,52 +9,71 @@ import com.padma.demo.models.ListTodo;
 import com.padma.demo.repository.ListTodoRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import com.padma.demo.repository.UserRepository;
+import com.padma.demo.models.User;
+import jakarta.transaction.Transactional;
 
 @Service
 public class TodoService {
 
     private final TodoRepository todoRepository;
     private final ListTodoRepository listTodoRepository;
+    private final UserRepository userRepository;
 
-    public TodoService(TodoRepository todoRepository, ListTodoRepository listTodoRepository) {
+    public TodoService(TodoRepository todoRepository, ListTodoRepository listTodoRepository,
+            UserRepository userRepository) {
         this.todoRepository = todoRepository;
         this.listTodoRepository = listTodoRepository;
+        this.userRepository = userRepository;
     }
 
     // Crud Todo
 
     // crear todo
 
+    @Transactional
     public Todo createTodo(Todo todos, Long listTodoId) {
+        if (todos == null) {
+            throw new RuntimeException("Todo is null");
+        }
 
+        // --- 1) resolver siempre el User ---
+        User user = todos.getUsers();
+        if (user == null || user.getUserId() == null) {
+            throw new RuntimeException("User information is missing in Todo or userId is null");
+        }
+        Long userId = user.getUserId();
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        todos.setUsers(existingUser); // ahora es managed y tiene todos los campos
+
+        // --- 2) asociar lista si viene ---
         if (listTodoId != null) {
             Optional<ListTodo> listOptional = listTodoRepository.findById(listTodoId);
             if (listOptional.isPresent()) {
-                ListTodo listTodos = listOptional.get();
-                todos.setListTodos(listTodos); // asocia el todo a la lista
-                todos.setUsers(listTodos.getUsers()); // asigna el usuario de la lista al todo
+                todos.setListTodos(listOptional.get());
             } else {
                 throw new RuntimeException("No se encontró la lista con ID: " + listTodoId);
             }
         }
 
-        // Validación de prioridad (matrix de este man eisenhower )
+        // --- 3) defaults y validaciones ---
         String priority = todos.getPriority();
         if (priority == null || !isValidPriority(priority)) {
-            todos.setPriority("Not Urgent but Important"); // Valor por defecto
+            todos.setPriority("Not Urgent but Important");
         }
-
-        // Fecha límite por defecto
         if (todos.getDueDate() == null) {
-            todos.setDueDate(LocalDate.now().plusDays(1)); // Por defecto, mañana
+            todos.setDueDate(LocalDate.now().plusDays(1));
         }
-
-        // Estados iniciales
         todos.setCompleted(false);
         todos.setCompletedAt(null);
         todos.setCreatedAt(LocalDate.now());
 
-        return todoRepository.save(todos);
+        // --- 4) guardar y devolver ---
+        Todo saved = todoRepository.save(todos);
+
+        // saved.getUsers() es el existingUser (con campos cargados)
+        return saved;
     }
 
     // Editar Todo
