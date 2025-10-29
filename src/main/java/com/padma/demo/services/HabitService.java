@@ -10,16 +10,24 @@ import com.padma.demo.models.Area;
 import com.padma.demo.repository.AreaRepository;
 import com.padma.demo.models.HabitHistory;
 import com.padma.demo.repository.HabitHistoryRepository;
+import com.padma.demo.services.HabitHistoryService;
+import com.padma.demo.services.HabitCompletionService;
+import java.util.List;
 
 @Service
 public class HabitService {
 
     private final HabitRepository habitRepository;
     private final UserRepository userRepository;
+    private final HabitHistoryService habitHistoryService;
+    private final HabitCompletionService habitCompletionService;
 
-    public HabitService(HabitRepository habitRepository, UserRepository userRepository) {
+    public HabitService(HabitRepository habitRepository, UserRepository userRepository,
+            HabitHistoryService habitHistoryService, HabitCompletionService habitCompletionService) {
         this.habitRepository = habitRepository;
         this.userRepository = userRepository;
+        this.habitHistoryService = habitHistoryService;
+        this.habitCompletionService = habitCompletionService;
     }
 
     // Crear un hábito
@@ -47,5 +55,33 @@ public class HabitService {
         habit.setCompleted(false); // por defecto no está completado al crear
 
         return habitRepository.save(habit);
+    }
+
+    // Marcar hábito como completado (con nota)
+    public Habit markHabitAsCompleted(Long habitId, String note) {
+        Habit habit = habitRepository.findById(habitId)
+                .orElseThrow(() -> new RuntimeException("Hábito no encontrado con ID: " + habitId));
+
+        if (note == null || note.isEmpty()) {
+            throw new RuntimeException("Es obligatorio añadir una nota al completar el hábito.");
+        }
+
+        habit.setCompleted(true);
+        HabitHistory history = habitHistoryService.updateStreak(habit);
+        habitCompletionService.createCompletion(history, note);
+
+        return habitRepository.save(habit);
+    }
+
+    // Obtener todos los hábitos de un usuario
+    public List<Habit> getHabitsByUser(Long userId) {
+        return habitRepository.findAllByUsers(userId);
+    }
+
+    // Calcular progreso (% hacia goal)
+    public int calculateProgress(Habit habit) {
+        int streak = habit.getHabitHistory().getCurrentStreak();
+        int goal = habit.getGoal();
+        return (int) ((double) streak / goal * 100);
     }
 }
