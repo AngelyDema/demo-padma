@@ -14,5 +14,7 @@ public interface ListTodoRepository extends JpaRepository<ListTodo, Long> {
 
     Optional<ListTodo> findById(Long id);
 
+    List<ListTodo> findAllByUsers_UserId(Long userId);
+
     List<ListTodo> findByNameContainingIgnoreCase(String name);
 }

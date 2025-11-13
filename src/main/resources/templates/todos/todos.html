@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Padma | To-dos</title>
+  <link rel="stylesheet" th:href="@{/css/home.css}">
+  <link rel="stylesheet" th:href="@{/css/todos.css}">
+  <script defer th:src="@{/js/todos.js}"></script>
+</head>
+
+<body>
+  <div class="dashboard">
+    <!-- Sidebar principal -->
+    <aside class="sidebar">
+      <div class="logo"><h2>PADMA</h2></div>
+      <nav class="menu">
+        <a th:href="@{/home}">Home</a>
+        <a th:href="@{/todos}" class="active">To-dos</a>
+        <a th:href="@{/habits}">Hábitos</a>
+        <a th:href="@{/profile}">Perfil</a>
+      </nav>
+      <div class="logout"><a th:href="@{/logout}">Salir</a></div>
+    </aside>
+
+    <!-- Sidebar secundaria: Listas -->
+    <aside class="list-sidebar">
+      <h3>Listas</h3>
+      <ul class="list-group">
+        <li><a th:href="@{/todos/today}">Today</a></li>
+        <li><a th:href="@{/todos/week}">Next 7 days</a></li>
+        <li><a th:href="@{/todos/all}">All tasks</a></li>
+
+        <li th:each="list : ${lists}">
+          <a th:href="@{'/todos/list/' + ${listTodoId}}" th:text="${list.name}"></a>
+        </li>
+
+        <li th:if="${#lists.isEmpty(lists)}">
+          <p>No tienes listas aún.</p>
+        </li>
+      </ul>
+
+      <form th:action="@{/api/lists/create}" method="post" class="new-list-form">
+        <input type="text" name="name" placeholder="Nueva lista" required>
+        <button type="submit">+</button>
+      </form>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+      <header class="header">
+        <h1>Today's tasks</h1>
+        <p th:text="${currentDate}">Septiembre 28</p>
+      </header>
+
+      <!-- Fechas del mes -->
+      <div class="calendar-strip">
+        <div th:each="day : ${daysOfMonth}">
+          <button class="day-btn" th:text="${day.label}" th:data-date="${day.date}"
+                  th:classappend="${day.isToday} ? 'active' : ''"
+                  th:onclick="'filterByDate(\\'' + ${day.date} + '\\')'"></button>
+        </div>
+      </div>
+
+      <!-- Lista de tareas -->
+      <section class="todo-list">
+        <h2 th:text="${selectedFilter}">To Do</h2>
+        <ul>
+          <li th:each="todo : ${todos}">
+            <label class="todo-item">
+              <input type="checkbox" th:checked="${todo.completed}"
+                     th:onchange="'toggleTodo(' + ${todo.TodoId} + ')'">
+              <span th:text="${todo.name}">Tarea ejemplo</span>
+            </label>
+          </li>
+          <li th:if="${#lists.isEmpty(todos)}">
+            <p>No hay tareas para este día 🌱</p>
+          </li>
+        </ul>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

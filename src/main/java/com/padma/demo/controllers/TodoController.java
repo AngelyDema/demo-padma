@@ -54,4 +54,10 @@ public class TodoController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @PutMapping("/api/todos/{id}/toggle")
+    public ResponseEntity<Void> toggleTodo(@PathVariable Long id) {
+        todoService.toggleCompletion(id);
+        return ResponseEntity.ok().build();
+    }
+
 }

@@ -63,4 +63,8 @@ public class ListService {
     public void deleteList(Long id) {
         listTodoRepository.deleteById(id);
     }
+
+    public List<ListTodo> getListsByUser(Long userId) {
+        return listTodoRepository.findAllByUsers_UserId(userId);
+    }
 }

@@ -107,9 +107,21 @@ public class TodoService {
                 || priority.equalsIgnoreCase("Not Urgent and Not Important");
     }
 
+    public void toggleCompletion(Long todoId) {
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new RuntimeException("Todo no encontrado con id = " + todoId));
+        todo.setCompleted(!todo.isCompleted());
+        todoRepository.save(todo);
+    }
+
     // obtener por User
     public List<Todo> getTodosByUser(Long userId) {
-        return todoRepository.findByUsers(userId);
+        return todoRepository.findAllByUsers_UserId(userId);
+    }
+
+    public List<Todo> getTodosForToday(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        return todoRepository.findAllByUsers_UserIdAndDueDate(userId, LocalDate.now());
     }
 
 }

@@ -37,7 +37,41 @@
         <section id="main-section">
             <div id="home-section" class="section active">
                 <h2>Resumen de hoy</h2>
-                <p>Aquí verás tus tareas y hábitos destacados del día</p>
+
+                <!-- Sección de Tareas -->
+                <div class="tasks-summary">
+                    <h3>Tus tareas para hoy</h3>
+                    <div th:if="${todos != null and todos.size() > 0}">
+                        <ul>
+                            <li th:each="todo : ${todos}">
+                                <input type="checkbox" th:checked="${todo.completed}">
+                                <span th:text="${todo.name}"></span>
+                                <small th:text="${todo.priority}"></small>
+                            </li>
+                        </ul>
+                    </div>
+                    <div th:if="${todos == null or todos.size() == 0}">
+                        <p>No tienes tareas para hoy 🌿</p>
+                    </div>
+                </div>
+
+                <!-- Sección de Hábitos -->
+                <div class="habits-summary">
+                    <h3>Tus hábitos</h3>
+                    <div th:if="${habits != null and habits.size() > 0}">
+                        <ul>
+                            <li th:each="habit : ${habits}">
+                                <span th:text="${habit.title}"></span>
+                                <small th:text="${habit.description}"></small>
+                                <small th:text="${habit.goal}"></small>
+                                
+                            </li>
+                        </ul>
+                    </div>
+                    <div th:if="${habits == null or habits.size() == 0}">
+                        <p>No tienes hábitos para hoy 🌸.¡Crea uno! 📝</p>
+                    </div>
+                </div>
             </div>
 
             <div id="todos-section" class="section"></div>
