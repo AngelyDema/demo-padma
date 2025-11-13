@@ -107,4 +107,9 @@ public class TodoService {
                 || priority.equalsIgnoreCase("Not Urgent and Not Important");
     }
 
+    // obtener por User
+    public List<Todo> getTodosByUser(Long userId) {
+        return todoRepository.findByUsers(userId);
+    }
+
 }

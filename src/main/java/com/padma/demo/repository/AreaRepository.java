@@ -12,6 +12,6 @@ public interface AreaRepository extends JpaRepository<Area, Long> {
 
     List<Area> findByNameIgnoreCase(String name);
 
-    List<Area> findByUsers(Long users);
+    List<Area> findAllByUsers_UserId(Long userId);
 
 }

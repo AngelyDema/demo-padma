@@ -1,0 +1,231 @@
+:root {
+  --color-background: #EDEDED;
+  --color-primary: #f7b1c3;
+  --color-primary-hover: #ff96a7;
+  --color-accent: #e9ae3f;
+  --color-bg-glass: rgba(255, 255, 255, 0.15);
+  --color-bg-blur: rgba(255, 255, 255, 0.15);
+  --color-text-light: #f2f6f7;
+  --color-text-dark: #414040;
+  --color-placeholder: #ffffff;
+  --color-link: #ceffec;
+  --color-link-hover: #ffffff;
+  --color-border: #dcdcdc;
+  --color-shadow: rgba(31, 38, 135, 0.37);
+}
+
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  color: var(--color-text-dark);
+  background-color: var(--color-background);
+  display: flex;
+  height: 100vh;
+}
+
+.dashboard {
+  display: flex;
+  width: 100%;
+}
+
+/* === Sidebar principal === */
+.sidebar {
+  width: 80px;
+  background-color: var(--color-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.sidebar .logo h2 {
+  color: var(--color-text-light);
+  margin: 0 0 20px 0;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.menu a {
+  text-decoration: none;
+  color: var(--color-text-light);
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.menu a:hover,
+.menu a.active {
+  color: var(--color-link);
+  transform: scale(1.1);
+}
+
+/* Logout link */
+.logout {
+  margin-top: auto;
+  padding-bottom: 20px;
+}
+
+.logout a {
+  text-decoration: none;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  transition: color 0.3s;
+}
+
+.logout a:hover {
+  color: var(--color-link);
+}
+
+/* === Sidebar secundaria (Áreas) === */
+.area-sidebar {
+  width: 200px;
+  background-color: #fff;
+  border-right: 1px solid var(--color-border);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.area-sidebar h3 {
+  margin-top: 0;
+  color: var(--color-text-dark);
+}
+
+.area-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+}
+
+.area-sidebar li + li {
+  margin-top: 10px;
+}
+
+.area-sidebar li a {
+  text-decoration: none;
+  color: var(--color-text-dark);
+  padding: 6px 8px;
+  border-radius: 6px;
+  display: block;
+  transition: background-color 0.2s;
+}
+
+.area-sidebar li a:hover {
+  background-color: var(--color-primary-hover);
+  color: var(--color-text-light);
+}
+
+/* === Contenido principal === */
+.main-content {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+.welcome h1 {
+  color: var(--color-primary);
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.welcome p {
+  margin-top: 0;
+  color: var(--color-text-dark);
+  margin-bottom: 30px;
+}
+
+/* Tarjetas / secciones de hábito */
+.card-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Formulario nuevo hábito */
+.habit-form {
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(5px);
+  border-radius: 14px;
+  padding: 20px 25px;
+  box-shadow: var(--color-shadow);
+}
+
+.habit-form input[type="text"],
+.habit-form textarea,
+.habit-form input[type="number"] {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 8px;
+  margin-bottom: 15px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.habit-form button {
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+
+.habit-form button:hover {
+  background-color: var(--color-primary-hover);
+}
+
+/* Lista de hábitos */
+.habit-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.habit-list li {
+  background-color: var(--color-card, #f0f0f0);
+  border-radius: 12px;
+  padding: 15px 20px;
+  box-shadow: var(--color-shadow);
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.habit-title {
+  font-size: 1.1rem;
+  color: var(--color-text-dark);
+  margin: 0;
+}
+
+.habit-streak {
+  font-weight: 600;
+  color: var(--color-accent);
+  font-size: 0.9rem;
+}
+
+.habit-desc {
+  color: var(--color-text-dark);
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+/* Responsive behavior */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 60px;
+  }
+  .area-sidebar {
+    display: none;
+  }
+  .main-content {
+    padding: 20px;
+  }
+}

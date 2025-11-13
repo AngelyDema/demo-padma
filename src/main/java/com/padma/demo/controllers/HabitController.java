@@ -1,13 +1,14 @@
 package com.padma.demo.controllers;
 
 import com.padma.demo.models.Habit;
+import com.padma.demo.models.User;
 import com.padma.demo.services.HabitService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
-import com.padma.demo.models.User;
-import com.padma.demo.models.HabitHistory;
+import com.padma.demo.repository.HabitRepository;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @RestController
@@ -18,6 +19,13 @@ public class HabitController {
 
     public HabitController(HabitService habitService) {
         this.habitService = habitService;
+    }
+
+    // Obtener todos los hábitos de un usuario
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Habit>> getHabitsByUserId(@PathVariable Long userId) {
+        List<Habit> habits = habitService.getHabitsByUserId(userId);
+        return new ResponseEntity<>(habits, HttpStatus.OK);
     }
 
     @PostMapping("/createHabit")
@@ -58,10 +66,5 @@ public class HabitController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
-    }
-
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Habit>> getHabitsByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(habitService.getHabitsByUser(userId));
     }
 }

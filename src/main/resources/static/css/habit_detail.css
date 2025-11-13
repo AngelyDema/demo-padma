@@ -1,0 +1,209 @@
+.container {
+  display: flex;
+  height: 100vh;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Sidebar principal */
+.sidebar {
+  width: 80px;
+  background-color: #e4a6b3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-icons {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.icon.active {
+  background: white;
+}
+
+/* Sub-sidebar */
+.sub-sidebar {
+  width: 220px;
+  background-color: #f8f7df;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sub-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sub-nav li {
+  margin-bottom: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #4d4d4d;
+}
+
+.sub-nav li.active {
+  color: #e4a6b3;
+}
+
+.areas h4 {
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #4d4d4d;
+}
+
+.areas ul {
+  list-style: none;
+  padding: 0;
+}
+
+.areas li {
+  margin-bottom: 8px;
+  cursor: pointer;
+  color: #e4a6b3;
+}
+
+/* Main */
+.main {
+  flex: 1;
+  background-color: #f7f7f7;
+  padding: 50px 70px;
+  overflow-y: auto;
+}
+
+/* Barra de nombre del hábito */
+.habit-header input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 5px;
+  font-size: 1rem;
+  background-color: #f7f7f7;
+}
+
+/* Tarjeta streak */
+.streak-card {
+  margin-top: 20px;
+  background-color: #f8f7df;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  width: 300px;
+}
+
+.streak-card .icon {
+  font-size: 1.5rem;
+  margin-right: 10px;
+}
+
+.streak-text .label {
+  font-size: 0.8rem;
+  color: #777;
+  margin: 0;
+}
+
+.streak-text .value {
+  font-size: 1rem;
+  color: #333;
+  margin: 0;
+}
+
+/* Tarjetas de estadísticas */
+.stats {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.stat-card {
+  background-color: #f7f7f7;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  padding: 15px 25px;
+  text-align: center;
+}
+
+.stat-card .label {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.stat-card .value {
+  font-size: 1rem;
+  color: #ccc;
+  margin-top: 5px;
+}
+
+/* Barra de progreso */
+.progress-section {
+  margin-top: 20px;
+  width: 300px;
+}
+
+.progress-bar {
+  background-color: #d9d9d9;
+  border-radius: 15px;
+  height: 35px;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background-color: #f08fa5;
+  height: 100%;
+  width: 10%;
+  text-align: center;
+  color: white;
+  font-weight: 600;
+  border-radius: 15px;
+  line-height: 35px;
+}
+
+/* Calendario */
+.calendar {
+  margin-top: 25px;
+  background-color: #f7f7f7;
+  border-radius: 6px;
+  padding: 20px;
+  width: 380px;
+}
+
+.calendar table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.calendar th {
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding-bottom: 10px;
+  color: #777;
+}
+
+.calendar td {
+  padding: 6px 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.calendar td.today {
+  background-color: #f8e6eb;
+  border-radius: 50%;
+  color: #e48aa0;
+}

@@ -1,0 +1,122 @@
+/* Fondo general */
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background-image: url('../media/lotofondo.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Contenedor principal del formulario */
+main {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+  padding: 40px;
+  width: 380px;
+  text-align: center;
+}
+
+/* Título */
+h1 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #f2f6f7;
+}
+
+/* Inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 90%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 20px;
+  border: solid 1px #dcdcdc;
+  background: rgba(255, 255, 255, 0);
+  color: #ffffff;
+  font-size: 1rem;
+  transition: 0.3s ease;
+}
+
+input::placeholder {
+  color: #ffffff;
+}
+
+input:focus {
+  outline: none;
+  border: solid 1.5px #ff96a7;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Botones */
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: 0.3s ease;
+}
+
+/* Botón principal */
+#signup-btn {
+  background-color: #f7b1c3;
+  color: #414040;
+}
+
+#signup-btn:hover {
+  background-color: #ff96a7;
+}
+
+/* Botón Google */
+#google-signup-btn {
+  background-color: rgba(255, 255, 255, 0.75);
+  color: #414040;
+}
+
+#google-signup-btn:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Links */
+a {
+  color: #ceffec;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Texto secundario */
+p, small, label {
+  color: #e9ae3f;
+  text-align: center;
+}
+
+/* Accesibilidad y espaciado */
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+legend {
+  display: none;
+}
+
+form {
+  text-align: left;
+}

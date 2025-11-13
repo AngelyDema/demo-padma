@@ -1,0 +1,151 @@
+:root {
+  --color-background: #fffde9;
+  --color-sidebar: #f0bfd2;
+  --color-subsidebar: #fefcdf;
+  --color-text-dark: #333;
+  --color-accent: #c25b6c;
+  --color-date: #c9fcb8;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-text-dark);
+}
+
+/* === SIDEBAR PRINCIPAL === */
+.sidebar {
+  width: 80px;
+  background-color: var(--color-sidebar);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.sidebar-icons {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  margin-top: 10px;
+}
+
+.icon {
+  width: 35px;
+  height: 35px;
+  background-color: rgba(255,255,255,0.4);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.icon.active {
+  background-color: #fff;
+}
+
+/* === SUB-SIDEBAR === */
+.sub-sidebar {
+  width: 160px;
+  background-color: var(--color-subsidebar);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px 20px;
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.menu-top p {
+  margin-bottom: 15px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.menu-top p:hover {
+  text-decoration: underline;
+}
+
+.menu-bottom h4 {
+  color: var(--color-accent);
+  margin-bottom: 10px;
+}
+
+.menu-bottom p {
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.menu-bottom p:hover {
+  text-decoration: underline;
+}
+
+/* === MAIN CONTENT === */
+.main-content {
+  flex: 1;
+  padding: 50px 60px;
+}
+
+.main-content h1 {
+  font-size: 1.8rem;
+  color: var(--color-text-dark);
+}
+
+.date {
+  margin-top: 4px;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+/* === DATES === */
+.dates {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+  margin-bottom: 40px;
+}
+
+.date-card {
+  background-color: var(--color-date);
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.date-card:hover {
+  transform: translateY(-3px);
+}
+
+/* === TO DO === */
+.todo-section h2 {
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+}
+
+.todo-list {
+  list-style: none;
+}
+
+.todo-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+  font-size: 1rem;
+}
+
+.todo-list input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}

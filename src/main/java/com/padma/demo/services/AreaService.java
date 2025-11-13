@@ -6,6 +6,7 @@ import com.padma.demo.repository.AreaRepository;
 import com.padma.demo.models.User;
 import com.padma.demo.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import java.util.List;
 
 @Service
 public class AreaService {
@@ -41,6 +42,11 @@ public class AreaService {
         }
 
         return areaRepository.save(area);
+    }
+
+    // Obtener todos los hábitos de un usuario
+    public List<Area> getAreasByUser(Long userId) {
+        return areaRepository.findAllByUsers_UserId(userId);
     }
 
 }

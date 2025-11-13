@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Dashboard</title>
+  <link rel="stylesheet" href="../css/todo.css" />
+</head>
+<body>
+  <!-- Sidebar principal -->
+  <aside class="sidebar">
+    <div class="sidebar-icons">
+      <div class="icon user"></div>
+      <div class="icon check active"></div>
+      <div class="icon home"></div>
+      <div class="icon clock"></div>
+    </div>
+  </aside>
+
+  <!-- Sub-sidebar -->
+  <aside class="sub-sidebar">
+    <div class="menu-top">
+      <p>Today</p>
+      <p>Next 7 days</p>
+      <p>All tasks</p>
+    </div>
+
+    <div class="menu-bottom">
+      <h4>Lists</h4>
+      <p>📋 Subject</p>
+      <p>📋 Subject</p>
+      <p>📋 Subject</p>
+      <p>📋 Subject</p>
+    </div>
+  </aside>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <h1>Today's tasks</h1>
+    <p class="date">September 28</p>
+
+    <div class="dates">
+      <div class="date-card">Sep 29</div>
+      <div class="date-card">Sep 30</div>
+      <div class="date-card">Oct 01</div>
+      <div class="date-card">Oct 02</div>
+      <div class="date-card">Oct 03</div>
+      <div class="date-card">Oct 04</div>
+      <div class="date-card">Oct 05</div>
+    </div>
+
+    <section class="todo-section">
+      <h2>To Do</h2>
+      <ul class="todo-list">
+        <li><input type="checkbox" /> Tarea 1</li>
+        <li><input type="checkbox" /> Tarea 2</li>
+        <li><input type="checkbox" /> Tarea 3</li>
+        <li><input type="checkbox" /> Tarea 4</li>
+        <li><input type="checkbox" /> Tarea 5</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Padma | Hábitos</title>
+  <link rel="stylesheet" th:href="@{/css/home.css}">
+  <link rel="stylesheet" th:href="@{/css/habits.css}">
+  <script defer th:src="@{/js/habits.js}"></script>
+</head>
+
+<body>
+  <div class="dashboard">
+    <!-- Sidebar principal -->
+    <aside class="sidebar">
+      <div class="logo">
+        <h2>PADMA</h2>
+      </div>
+
+      <nav class="menu">
+        <a th:href="@{/home}" data-section="home">Home</a>
+        <a th:href="@{/todos}" data-section="todos">To-dos</a>
+        <a th:href="@{/habits}" class="active" data-section="habits"> Hábitos</a>
+        <a th:href="@{/profile}" data-section="profile">Perfil</a>
+      </nav>
+
+      <div class="logout">
+        <a th:href="@{/logout}">Salir</a>
+      </div>
+    </aside>
+
+    <!-- Sidebar secundaria: Áreas -->
+    <aside class="area-sidebar">
+      <h3>Áreas</h3>
+      <ul class="area-list">
+        <li th:each="area : ${areas}">
+          <a th:href="@{'/habits/area/' + ${area.areaId}}" th:text="${area.name}">Área ejemplo</a>
+        </li>
+        <li th:if="${#lists.isEmpty(areas)}">
+          <p>No tienes áreas aún.</p>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+      <header class="welcome">
+        <h1>Hola, <span th:text="${user != null ? user.name : 'Usuario'}">Usuario</span> 👋</h1>
+        <p>Gestiona tus hábitos para hoy y tus áreas.</p>
+      </header>
+
+      <section class="card-container">
+        <!-- Formulario para crear nuevo hábito -->
+        <div class="card">
+          <h2>Crear nuevo hábito</h2>
+          <form th:action="@{/api/habits/createHabit}" method="post" class="habit-form">
+            <input type="hidden" name="userId" th:value="${user.userId}" />
+            <label for="title">Título</label>
+            <input type="text" id="title" name="title" placeholder="Título del hábito" required>
+            <label for="description">Descripción</label>
+            <textarea id="description" name="description" placeholder="Descripción..."></textarea>
+            <label for="goal">Meta diaria</label>
+            <input type="number" id="goal" name="goal" placeholder="Meta de días" min="1" required>
+            <button type="submit" class="btn-primary">Agregar hábito</button>
+          </form>
+        </div>
+
+        <!-- Lista de hábitos -->  
+        <div class="card">
+          <h2>Tus hábitos</h2>
+          <ul class="habit-list">
+            <li th:each="habit : ${habits}">
+              <div class="habit-item">
+                <span class="habit-title" th:text="${habit.title}">Título del hábito</span>
+                <span class="habit-streak"><span th:text="${habit.habitHistory != null ? habit.habitHistory.currentStreak : 0}">0</span></span>
+                <p class="habit-desc" th:text="${habit.description}">Descripción...</p>
+              </div>
+            </li>
+            <li th:if="${#lists.isEmpty(habits)}">
+              <p class="empty-msg">No has creado hábitos aún 🌷</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

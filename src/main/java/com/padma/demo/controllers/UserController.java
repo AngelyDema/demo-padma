@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import jakarta.servlet.http.HttpSession;
 
 import java.util.Map;
 
@@ -15,15 +17,13 @@ public class UserController {
 
     private final UserService userService;
 
-    // Constructor-based injection 
+    // Constructor-based injection
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    
     // Registrar usuario nuevo
-
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody Map<String, String> request) {
         try {
@@ -41,8 +41,9 @@ public class UserController {
     }
 
     // ============================
-    // 2️⃣ Login 
+    // 2️⃣ Login
     // ============================
+
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody Map<String, String> request) {
         try {
@@ -52,8 +53,7 @@ public class UserController {
 
             return ResponseEntity.ok(Map.of(
                     "message", "Inicio de sesión exitoso",
-                    "user_id", users
-            ));
+                    "user_id", users));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", e.getMessage()));
@@ -76,7 +76,8 @@ public class UserController {
     public ResponseEntity<?> getUserByEmail(@RequestParam String email) {
         try {
             User users = userService
-                    .login(email, ""); // ⚠️ no se valida password, solo ejemplo (ideal: método específico en el service)
+                    .login(email, ""); // ⚠️ no se valida password, solo ejemplo (ideal: método específico en el
+                                       // service)
             return ResponseEntity.ok(users);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -92,4 +93,3 @@ public class UserController {
         return "✅ API UserController funcionando correctamente.";
     }
 }
-

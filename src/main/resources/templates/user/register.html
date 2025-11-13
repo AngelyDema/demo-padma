@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign Up</title>
+  <meta name="description" content="Create your account to access all Padma services" />
+  <meta name="author" content="angelydema" />
+  <link rel="stylesheet" th:href="@{/css/register.css}">
+</head>
+
+<body>
+  <main>
+    <section aria-labelledby="signup-heading">
+      <h1 id="signup-heading">Create Account</h1>
+<!-- Mostrar mensaje de error si existe -->
+      <div th:if="${RegisterError}" class="error" th:text="${RegisterError}" style="color:crimson; margin-bottom:12px;"></div>
+
+      <form th:action="@{/register}" method="post" aria-describedby="register-instructions" novalidate>
+        <fieldset>
+          <legend>Sign up details</legend>
+
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="First name"
+            autocomplete="given-name"
+            required
+          />
+
+          <input
+            type="text"
+            id="lastname"
+            name="lastname"
+            placeholder="Last name"
+            autocomplete="family-name"
+            required
+          />
+
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="example@email.com"
+            autocomplete="email"
+            required
+          />
+
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Create a password"
+            autocomplete="new-password"
+            required
+          />
+        </fieldset>
+
+        <p>
+          <button type="submit" id="signup-btn">Sign Up</button>
+        </p>
+
+        <p>
+          <button
+            type="button"
+            id="google-signup-btn"
+            aria-label="Sign up with Google"
+          >
+            Sign up with Google
+          </button>
+        </p>
+
+        <p>
+          Already have an account? 
+          <a href="./login.html" id="signin-link">Sign in here</a>
+        </p>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

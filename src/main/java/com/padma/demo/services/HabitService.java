@@ -79,8 +79,8 @@ public class HabitService {
     }
 
     // Obtener todos los hábitos de un usuario
-    public List<Habit> getHabitsByUser(Long userId) {
-        return habitRepository.findAllByUsers(userId);
+    public List<Habit> getHabitsByUserId(Long userId) {
+        return habitRepository.findAllByUsers_UserId(userId);
     }
 
     // Calcular progreso (% hacia goal)

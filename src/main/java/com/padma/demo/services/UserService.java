@@ -1,4 +1,5 @@
 package com.padma.demo.services;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.padma.demo.models.User;
@@ -6,9 +7,9 @@ import com.padma.demo.repository.UserRepository;
 
 @Service
 public class UserService {
-    
+
     private final UserRepository userRepository;
-    
+
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -27,7 +28,7 @@ public class UserService {
         users.setName(name);
         users.setLastname(lastname);
         users.setEmail(email);
-        users.setPassword(password); 
+        users.setPassword(password);
         return userRepository.save(users);
     }
 
@@ -41,8 +42,9 @@ public class UserService {
         return users;
     }
 
-
-    
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    }
 
 }
-

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login</title>
+  <meta name="description" content="Inicia sesión en tu cuenta para acceder a todos los servicios de padma" />
+  <meta name="author" content="angelydema" />
+  <link rel="stylesheet" th:href="@{/css/login.css}" />
+</head>
+<body>
+  <main>
+    <section aria-labelledby="login-heading">
+      <h1 id="login-heading">Sign in</h1>
+
+      <!-- Mostrar mensaje de error si existe -->
+      <div th:if="${loginError}" class="error" th:text="${loginError}" style="color:crimson; margin-bottom:12px;"></div>
+
+      <form th:action="@{/login}" method="post" aria-describedby="login-instructions" novalidate>
+        <fieldset>
+          <legend>Access data</legend>
+
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="ejemplo@correo.com"
+            autocomplete="email"
+            required
+            aria-required="true"
+            aria-describedby="email-help"
+            th:value="${email}" />
+
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="password"
+            autocomplete="current-password"
+            required
+            aria-required="true"
+            aria-describedby="password-help"
+          />
+        </fieldset>
+
+        <p>
+          <a th:href="@{/passwordreset}">Forgot your password?</a>
+        </p>
+
+        <p>
+          <button type="submit" id="login-btn">Iniciar sesión</button>
+        </p>
+
+        <p>
+          <button type="button" id="google-login-btn" aria-label="Login with Google">
+            Sign in with Google
+          </button>
+        </p>
+
+        <p>
+          No account? <a th:href="@{/register}">Register here</a>
+        </p>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
+
