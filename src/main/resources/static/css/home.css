@@ -150,3 +150,9 @@ body {
   gap: 1rem;
   margin-bottom: 1.8rem;
 }
+
+.tasks-summary li.completed .todo-name {
+  text-decoration: none;
+  color: #9aa0a6;
+  font-style: italic;
+}

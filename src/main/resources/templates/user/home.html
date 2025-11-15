@@ -43,11 +43,16 @@
                     <h3>Tus tareas para hoy</h3>
                     <div th:if="${todos != null and todos.size() > 0}">
                         <ul>
-                            <li th:each="todo : ${todos}">
-                                <input type="checkbox" th:checked="${todo.completed}">
-                                <span th:text="${todo.name}"></span>
+                        <li th:each="todo : ${todos}" th:classappend="${todo.completed} ? ' completed' : ''">
+                            <input
+                                type="checkbox"
+                                th:checked="${todo.completed}"
+                                th:attr="onchange=|toggleTodo(${todo.todoId}, this)|" />
+
+                                <span class="todo-name" th:text="${todo.name}"></span>
                                 <small th:text="${todo.priority}"></small>
-                            </li>
+                        </li>
+
                         </ul>
                     </div>
                     <div th:if="${todos == null or todos.size() == 0}">
