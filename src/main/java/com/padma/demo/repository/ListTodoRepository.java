@@ -12,7 +12,7 @@ public interface ListTodoRepository extends JpaRepository<ListTodo, Long> {
 
     List<ListTodo> findByUsers(Long users);
 
-    Optional<ListTodo> findById(Long id);
+    Optional<ListTodo> findByListTodoId(Long listTodoId);
 
     List<ListTodo> findAllByUsers_UserId(Long userId);
 

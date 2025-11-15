@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.springframework.stereotype.Service;
 import com.padma.demo.models.ListTodo;
 import com.padma.demo.repository.ListTodoRepository;
+import com.padma.demo.repository.TodoRepository;
 import com.padma.demo.models.Todo;
 import com.padma.demo.models.User;
 import jakarta.transaction.Transactional;
@@ -15,10 +16,23 @@ public class ListService {
 
     ListTodoRepository listTodoRepository;
     UserRepository userRepository;
+    TodoRepository todoRepository;
 
-    public ListService(ListTodoRepository listTodoRepository, UserRepository userRepository) {
+    public ListService(ListTodoRepository listTodoRepository, UserRepository userRepository,
+            TodoRepository todoRepository) {
         this.listTodoRepository = listTodoRepository;
         this.userRepository = userRepository;
+        this.todoRepository = todoRepository;
+    }
+
+    public ListTodo getListById(Long id) {
+        return listTodoRepository.findByListTodoId(id)
+                .orElseThrow(() -> new RuntimeException("Error..."));
+
+    }
+
+    public List<Todo> getTodosByList(Long listId) {
+        return todoRepository.findAllByListTodos(listId);
     }
 
     // Crear una lista

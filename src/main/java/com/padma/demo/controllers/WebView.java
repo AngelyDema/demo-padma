@@ -23,6 +23,8 @@ import org.springframework.http.HttpStatus;
 import com.padma.demo.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.padma.demo.models.User;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Map;
 
 /**
@@ -162,6 +164,20 @@ public class WebView {
         model.addAttribute("todos", todos);
         model.addAttribute("lists", lists);
         return "todos/todos";
+    }
+
+    @GetMapping("/lists")
+    public String viewLists(HttpSession session, Model model) {
+
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
+
+        List<ListTodo> lists = listService.getListsByUser(userId);
+        model.addAttribute("lists", lists);
+
+        return "todos/lists"; // Vista HTML con el modal incluido
     }
 
 }

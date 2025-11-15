@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Tareas</title>
+</head>
+
+<body>
+
+<h2 th:text="'Lista: ' + ${list.name}"></h2>
+
+<ul>
+    <li th:each="t : ${todos}">
+        <b>[[${t.title}]]</b> - [[${t.priority}]]
+    </li>
+</ul>
+
+<button onclick="openTodoModal()">Agregar Tarea</button>
+
+<!-- Modal para crear TODO -->
+<div id="todoModal" style="display:none;">
+    <div>
+        <h3>Crear nueva tarea</h3>
+
+        <input id="todoTitle" placeholder="Título">
+        <input id="todoDesc" placeholder="Descripción">
+        
+        <select id="todoPriority">
+            <option value="low">Baja</option>
+            <option value="medium">Media</option>
+            <option value="high">Alta</option>
+        </select>
+
+        <button onclick="saveTodo()">Guardar</button>
+        <button onclick="closeTodoModal()">Cerrar</button>
+    </div>
+</div>
+
+<script>
+
+function openTodoModal(){
+    document.getElementById("todoModal").style.display = "block";
+}
+
+function closeTodoModal(){
+    document.getElementById("todoModal").style.display = "none";
+}
+
+function saveTodo() {
+
+    const title = document.getElementById("todoTitle").value;
+    const desc = document.getElementById("todoDesc").value;
+    const priority = document.getElementById("todoPriority").value;
+
+    const listId = [[${list.listId}]];
+
+    fetch("/app/todo/create", {
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: `listId=${listId}&title=${title}&description=${desc}&priority=${priority}`
+    }).then(() => location.reload());
+}
+
+</script>
+
+</body>
+</html>
