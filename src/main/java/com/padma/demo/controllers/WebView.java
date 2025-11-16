@@ -14,9 +14,7 @@ import com.padma.demo.services.HabitService;
 import com.padma.demo.services.AreaService;
 import com.padma.demo.services.TodoService;
 import com.padma.demo.services.ListService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -31,6 +29,7 @@ import java.util.Map;
  * Controlador de vistas Thymeleaf.
  */
 @Controller
+
 public class WebView {
 
     private final UserService userService;
@@ -160,24 +159,11 @@ public class WebView {
         List<Todo> todos = todoService.getTodosForToday(userId);
         List<ListTodo> lists = listService.getListsByUser(userId);
 
+        model.addAttribute("userId", userId);
         model.addAttribute("user", user);
         model.addAttribute("todos", todos);
         model.addAttribute("lists", lists);
         return "todos/todos";
-    }
-
-    @GetMapping("/lists")
-    public String viewLists(HttpSession session, Model model) {
-
-        Long userId = (Long) session.getAttribute("userId");
-        if (userId == null) {
-            return "redirect:/login";
-        }
-
-        List<ListTodo> lists = listService.getListsByUser(userId);
-        model.addAttribute("lists", lists);
-
-        return "todos/lists"; // Vista HTML con el modal incluido
     }
 
 }

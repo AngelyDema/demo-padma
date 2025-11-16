@@ -28,4 +28,6 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     List<Todo> findAllByUsers_UserId(Long userId);
 
+    List<Todo> findByUsers_UserIdAndDueDateBetween(Long userId, LocalDate start, LocalDate end);
+
 }

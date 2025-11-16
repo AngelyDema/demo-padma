@@ -21,7 +21,7 @@ public class AreaController {
     }
 
     // Crear Área
-    @PostMapping("/")
+    @PostMapping("/createArea")
     @Transactional
     public ResponseEntity<?> createArea(@RequestBody Area area) {
         try {

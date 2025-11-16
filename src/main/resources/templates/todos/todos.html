@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+  
 <head>
   <meta charset="UTF-8">
   <title>Padma | To-dos</title>
   <link rel="stylesheet" th:href="@{/css/home.css}">
-  <link rel="stylesheet" th:href="@{/css/todos.css}">
-  <script defer th:src="@{/js/todos.js}"></script>
+  <link rel="stylesheet" th:href="@{/css/todo.css}">
+  <script th:src="@{/js/todo.js}"></script>
 </head>
 
-<body>
+<body th:attr="data-user-id=${userId}">
   <div class="dashboard">
     <!-- Sidebar principal -->
     <aside class="sidebar">
@@ -39,10 +40,11 @@
         </li>
       </ul>
 
-      <form th:action="@{/api/lists/create}" method="post" class="new-list-form">
-        <input type="text" name="name" placeholder="Nueva lista" required>
-        <button type="submit">+</button>
-      </form>
+      <form class="new-list-form" id="createListForm">
+  <input type="text" id="listName" placeholder="Nueva lista" required maxlength="50">
+  <button type="button" id="createListBtn">+</button>
+</form>
+
     </aside>
 
     <!-- Contenido principal -->
@@ -61,6 +63,43 @@
         </div>
       </div>
 
+      <!-- AGREGAR TAREA -->
+<div class="add-task-form">
+  <div class="input-group">
+    <input type="text" id="taskName" placeholder="Add new task" maxlength="100">
+    
+    <div class="date-picker-wrapper">
+      <label for="taskDate">📅</label>
+      <input type="date" id="taskDate" th:value="${#temporals.format(#temporals.createToday(), 'yyyy-MM-dd')}">
+    </div>
+
+    <button id="toggleMoreBtn" class="more-btn">⋮</button>
+  </div>
+
+  <!-- Sección expandible de detalles -->
+  <div id="moreDetails" class="more-details hidden">
+    <textarea id="taskDesc" placeholder="Descripción (opcional)"></textarea>
+    
+    <select id="taskList">
+      <option value="">-- Sin lista --</option>
+      <option th:each="list : ${lists}" th:value="${list.listTodoId}" th:text="${list.name}"></option>
+    </select>
+
+    <select id="taskPriority">
+      <option value="Not Urgent but Important" selected>Not Urgent but Important</option>
+      <option value="Urgent and Important">Urgent and Important</option>
+      <option value="Urgent but not Important">Urgent but not Important</option>
+      <option value="Not Urgent and Not Important">Not Urgent and Not Important</option>
+    </select>
+
+    <div class="form-buttons">
+      <button id="cancelBtn" class="btn-cancel">Cancelar</button>
+      <button id="createBtn" class="btn-create">Crear Tarea</button>
+    </div>
+  </div>
+</div>
+
+
       <!-- Lista de tareas -->
       <section class="todo-list">
         <h2 th:text="${selectedFilter}">To Do</h2>
@@ -77,6 +116,8 @@
           </li>
         </ul>
       </section>
+
+      
     </main>
   </div>
 </body>

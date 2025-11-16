@@ -120,8 +120,17 @@ public class TodoService {
     }
 
     public List<Todo> getTodosForToday(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow();
         return todoRepository.findAllByUsers_UserIdAndDueDate(userId, LocalDate.now());
+    }
+
+    public List<Todo> getTodosForNext7Days(Long userId) {
+        LocalDate today = LocalDate.now();
+        LocalDate week = today.plusDays(7);
+        return todoRepository.findByUsers_UserIdAndDueDateBetween(userId, today, week);
+    }
+
+    public List<Todo> getTodosByDate(Long userId, LocalDate date) {
+        return todoRepository.findAllByUsers_UserIdAndDueDate(userId, date);
     }
 
 }

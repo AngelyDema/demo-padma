@@ -25,7 +25,7 @@ public class ListTodoController {
     }
 
     // Crear Lista
-    @PostMapping("/")
+    @PostMapping("/createList")
     public ResponseEntity<?> createListTodo(@RequestBody ListTodo listTodo) {
         try {
             ListTodo createdList = listService.createList(listTodo);
