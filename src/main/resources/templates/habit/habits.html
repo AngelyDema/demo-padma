@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <title>Padma | Hábitos</title>
   <link rel="stylesheet" th:href="@{/css/home.css}">
-  <link rel="stylesheet" th:href="@{/css/habits.css}">
-  <script defer th:src="@{/js/habits.js}"></script>
+  <link rel="stylesheet" th:href="@{/css/habit.css}">
+  <script defer th:src="@{/js/habit.js}"></script>
 </head>
 
-<body>
+<body th:attr="data-user-id=${user.userId}">
+
   <div class="dashboard">
     <!-- Sidebar principal -->
     <aside class="sidebar">
@@ -28,18 +29,46 @@
       </div>
     </aside>
 
-    <!-- Sidebar secundaria: Áreas -->
-    <aside class="area-sidebar">
-      <h3>Áreas</h3>
-      <ul class="area-list">
-        <li th:each="area : ${areas}">
-          <a th:href="@{'/habits/area/' + ${area.areaId}}" th:text="${area.name}">Área ejemplo</a>
-        </li>
-        <li th:if="${#lists.isEmpty(areas)}">
-          <p>No tienes áreas aún.</p>
-        </li>
-      </ul>
-    </aside>
+   <!-- Sidebar secundaria: Áreas -->
+<aside class="area-sidebar">
+  <h3>Áreas</h3>
+  
+  <ul class="area-list">
+    <li th:each="area : ${areas}">
+      <a th:href="@{'/habits/area/' + ${area.areaId}}" th:text="${area.name}">Área ejemplo</a>
+    </li>
+    <li th:if="${#lists.isEmpty(areas)}">
+      <p>No tienes áreas aún.</p>
+    </li>
+  </ul>
+
+  <!-- ✅ MODAL PARA CREAR ÁREA -->
+<div id="createAreaModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Crear Área</h2>
+    
+    <div class="form-group">
+      <label for="modalAreaName">Nombre</label>
+      <input type="text" id="modalAreaName" maxlength="50" required>
+    </div>
+
+    <div class="form-group">
+      <label for="modalAreaDesc">Descripción</label>
+      <textarea id="modalAreaDesc" maxlength="500" placeholder="Descripción (opcional)"></textarea>
+    </div>
+
+    <div class="modal-buttons">
+      <button id="cancelAreaBtn" class="btn-cancel">Cancelar</button>
+      <button id="saveAreaBtn" class="btn-primary">Guardar</button>
+    </div>
+  </div>
+</div>
+  <!-- ✅ FORMULARIO PARA CREAR ÁREA -->
+  <div class="new-area-form">
+    <input type="text" id="areaNameInput" placeholder="Nueva área" maxlength="50">
+    <button type="button" id="createAreaBtn">+</button>
+  </div>
+</aside>
 
     <!-- Contenido principal -->
     <main class="main-content">
@@ -49,37 +78,97 @@
       </header>
 
       <section class="card-container">
-        <!-- Formulario para crear nuevo hábito -->
-        <div class="card">
-          <h2>Crear nuevo hábito</h2>
-          <form th:action="@{/api/habits/createHabit}" method="post" class="habit-form">
-            <input type="hidden" name="userId" th:value="${user.userId}" />
-            <label for="title">Título</label>
-            <input type="text" id="title" name="title" placeholder="Título del hábito" required>
-            <label for="description">Descripción</label>
-            <textarea id="description" name="description" placeholder="Descripción..."></textarea>
-            <label for="goal">Meta diaria</label>
-            <input type="number" id="goal" name="goal" placeholder="Meta de días" min="1" required>
-            <button type="submit" class="btn-primary">Agregar hábito</button>
-          </form>
-        </div>
+        <!-- Formulario para crear nuevo hábito - EXPANDIBLE -->
+<div class="card create-habit-card">
+  <h2>Crear nuevo hábito</h2>
+  
+  <!-- INPUT INICIAL (siempre visible) -->
+  <div class="habit-input-group">
+    <input type="text" id="habitTitle" placeholder="Nombre del hábito" maxlength="100" required>
+    <button type="button" id="toggleHabitMoreBtn" class="more-btn">⋮</button>
+  </div>
+
+  <!-- FORMULARIO EXPANDIBLE (oculto por defecto) -->
+  <form id="habitForm" class="habit-form hidden">
+    
+    <div class="form-group">
+      <label for="habitDesc">Descripción</label>
+      <textarea id="habitDesc" placeholder="Descripción (opcional)" maxlength="500"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="habitGoal">Meta diaria (días)</label>
+      <input type="number" id="habitGoal" placeholder="30" min="1" value="30" required>
+    </div>
+
+    <div class="form-group">
+      <label for="habitArea">Área (opcional)</label>
+      <select id="habitArea">
+        <option value="">-- Sin área --</option>
+        <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.name}"></option>
+      </select>
+    </div>
+
+    <div class="form-buttons">
+      <button type="button" id="cancelHabitBtn" class="btn-cancel">Cancelar</button>
+      <button type="submit" class="btn-primary">Crear Hábito</button>
+    </div>
+  </form>
+</div>
+
 
         <!-- Lista de hábitos -->  
-        <div class="card">
-          <h2>Tus hábitos</h2>
-          <ul class="habit-list">
-            <li th:each="habit : ${habits}">
-              <div class="habit-item">
-                <span class="habit-title" th:text="${habit.title}">Título del hábito</span>
-                <span class="habit-streak"><span th:text="${habit.habitHistory != null ? habit.habitHistory.currentStreak : 0}">0</span></span>
-                <p class="habit-desc" th:text="${habit.description}">Descripción...</p>
-              </div>
-            </li>
-            <li th:if="${#lists.isEmpty(habits)}">
-              <p class="empty-msg">No has creado hábitos aún 🌷</p>
-            </li>
-          </ul>
+<div class="card">
+  <h2>Tus hábitos</h2>
+  <ul class="habit-list">
+    <li th:each="habit : ${habits}">
+      <div class="habit-item">
+        <!-- Checkbox para marcar completado -->
+        <input type="checkbox" 
+               class="habit-checkbox"
+               th:data-habit-id="${habit.habitId}"
+               th:checked="${habit.completed}">
+        
+        <div class="habit-info">
+          <span class="habit-title" th:text="${habit.title}">Título del hábito</span>
+          <p class="habit-desc" th:text="${habit.description}">Descripción...</p>
         </div>
+        
+        <div class="habit-stats">
+          <span class="habit-streak">
+            🔥 <span th:text="${habit.habitHistory != null ? habit.habitHistory.currentStreak : 0}">0</span>
+          </span>
+          <span class="habit-goal" th:text="'/ ' + ${habit.goal}"></span>
+        </div>
+      </div>
+    </li>
+    
+    <li th:if="${#lists.isEmpty(habits)}">
+      <p class="empty-msg">No has creado hábitos aún 🌷</p>
+    </li>
+  </ul>
+</div>
+
+<!-- ✅ MODAL PARA COMPLETAR HÁBITO -->
+<div id="completeHabitModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Completar Hábito</h2>
+    <p id="modalHabitTitle" class="habit-modal-title">Nombre del hábito</p>
+    
+    <div class="form-group">
+      <label for="habitNote">Nota (¿Cómo te fue?)</label>
+      <textarea id="habitNote" 
+                placeholder="Añade una nota sobre cómo completaste este hábito..."
+                maxlength="500"></textarea>
+    </div>
+
+    <div class="modal-buttons">
+      <button id="cancelCompleteBtn" class="btn-cancel">Cancelar</button>
+      <button id="saveCompleteBtn" class="btn-primary">Guardar ✨</button>
+    </div>
+  </div>
+</div>
+
       </section>
     </main>
   </div>

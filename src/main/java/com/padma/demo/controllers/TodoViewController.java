@@ -139,4 +139,45 @@ public class TodoViewController {
 
         return "todos/lists"; // Vista HTML
     }
+
+    @GetMapping("/list/{listId}")
+    public String getTodosByList(
+            @PathVariable Long listId,
+            Model model,
+            HttpSession session) {
+
+        log.info("==> GET /todos/list/{}", listId);
+        log.debug("📍 listId recibido: {}", listId); // ← AGREGA ESTO
+
+        Long userId = (Long) session.getAttribute("LOGGED_USER_ID");
+        if (userId == null) {
+            log.warn("Usuario no autenticado");
+            return "redirect:/login";
+        }
+
+        try {
+            log.debug("🔍 Buscando lista con ID: {}", listId); // ← AGREGA ESTO
+
+            ListTodo list = listService.getListById(listId);
+            List<Todo> todos = listService.getTodosByList(listId);
+            List<ListTodo> lists = listService.getListsByUser(userId);
+
+            log.info("✅ {} tareas en la lista: {}", todos.size(), list.getName());
+
+            model.addAttribute("userId", userId);
+            model.addAttribute("todos", todos);
+            model.addAttribute("lists", lists);
+            model.addAttribute("listName", list.getName());
+            model.addAttribute("listDescription", list.getDescription());
+
+            return "todos/list";
+
+        } catch (Exception e) {
+            log.error("❌ EXCEPCIÓN en getTodosByList:", e); // ← AGREGA ESTO
+            log.error("📋 Mensaje: {}", e.getMessage());
+            log.error("🔍 Stack trace:", e);
+            return "redirect:/todos/today";
+        }
+    }
+
 }

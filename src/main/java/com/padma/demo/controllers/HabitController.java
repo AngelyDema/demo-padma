@@ -2,6 +2,7 @@ package com.padma.demo.controllers;
 
 import com.padma.demo.models.Habit;
 import com.padma.demo.models.User;
+import com.padma.demo.models.Area;
 import com.padma.demo.services.HabitService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,10 @@ import com.padma.demo.repository.HabitRepository;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import java.util.HashMap;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/habits")
 public class HabitController {
@@ -30,14 +34,18 @@ public class HabitController {
 
     @PostMapping("/createHabit")
     public ResponseEntity<?> createHabit(@RequestBody Map<String, Object> request) {
+        log.info("==> POST /api/habits/createHabit");
+        log.debug("📋 Payload recibido: {}", request);
+
         try {
-            // Extraer los campos del JSON
             Long userId = Long.valueOf(request.get("userId").toString());
             String title = (String) request.get("title");
             String description = (String) request.get("description");
-            int goal = request.get("goal") != null ? Integer.parseInt(request.get("goal").toString()) : 0;
+            int goal = request.get("goal") != null ? Integer.parseInt(request.get("goal").toString()) : 30;
+            boolean completed = request.get("completed") != null
+                    ? Boolean.parseBoolean(request.get("completed").toString())
+                    : false;
 
-            // Crear instancias de los modelos
             User user = new User();
             user.setUserId(userId);
 
@@ -46,25 +54,64 @@ public class HabitController {
             habit.setTitle(title);
             habit.setDescription(description);
             habit.setGoal(goal);
+            habit.setCompleted(completed);
 
-            // Llamar al service
+            // ✅ AGREGAR ÁREA SI VIENE EN EL PAYLOAD
+            if (request.containsKey("areaId") && request.get("areaId") != null) {
+                Long areaId = Long.valueOf(request.get("areaId").toString());
+                Area area = new Area();
+                area.setAreaId(areaId);
+                habit.setAreas(area);
+                log.info("✅ Área asignada al hábito: {}", areaId);
+            }
+
             Habit createdHabit = habitService.createHabit(habit);
+            log.info("✅ Hábito creado: {}", createdHabit.getTitle());
+
             return ResponseEntity.status(HttpStatus.CREATED).body(createdHabit);
 
         } catch (Exception e) {
+            log.error("❌ Error creando hábito: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", e.getMessage()));
         }
     }
 
     @PostMapping("/{habitId}/complete")
-    public ResponseEntity<?> markHabitAsCompleted(@PathVariable Long habitId, @RequestBody Map<String, String> body) {
+    public ResponseEntity<?> markHabitAsCompleted(
+            @PathVariable Long habitId,
+            @RequestBody Map<String, Object> body) {
+
+        log.info("==> POST /api/habits/{}/complete", habitId);
+
         try {
-            String note = body.get("note");
+            String note = (String) body.get("note");
+
+            if (note == null || note.trim().isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "La nota es obligatoria"));
+            }
+
             Habit updatedHabit = habitService.markHabitAsCompleted(habitId, note);
-            return ResponseEntity.ok(updatedHabit);
+
+            // ✅ Devolver solo datos necesarios (sin relaciones circulares)
+            Map<String, Object> response = new HashMap<>();
+            response.put("habitId", updatedHabit.getHabitId());
+            response.put("title", updatedHabit.getTitle());
+            response.put("completed", updatedHabit.isCompleted());
+            response.put("streak",
+                    updatedHabit.getHabitHistory() != null ? updatedHabit.getHabitHistory().getCurrentStreak() : 0);
+            response.put("longestStreak",
+                    updatedHabit.getHabitHistory() != null ? updatedHabit.getHabitHistory().getLongestStreak() : 0);
+
+            log.info("✅ Hábito completado: {}", updatedHabit.getTitle());
+            return ResponseEntity.ok(response);
+
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+            log.error("❌ Error: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
         }
     }
+
 }

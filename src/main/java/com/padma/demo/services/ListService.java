@@ -10,7 +10,9 @@ import com.padma.demo.models.Todo;
 import com.padma.demo.models.User;
 import jakarta.transaction.Transactional;
 import com.padma.demo.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class ListService {
 
@@ -26,13 +28,29 @@ public class ListService {
     }
 
     public ListTodo getListById(Long id) {
-        return listTodoRepository.findByListTodoId(id)
-                .orElseThrow(() -> new RuntimeException("Error..."));
+        log.info("🔍 Buscando ListTodo con ID: {}", id);
 
+        var result = listTodoRepository.findByListTodoId(id);
+        if (result.isEmpty()) {
+            log.error("❌ No se encontró lista con ID: {}", id);
+            throw new RuntimeException("Lista no encontrada con ID: " + id);
+        }
+
+        log.info("✅ Lista encontrada: {}", result.get().getName());
+        return result.get();
     }
 
     public List<Todo> getTodosByList(Long listId) {
-        return todoRepository.findAllByListTodos(listId);
+        log.info("🔍 Buscando todos para lista ID: {}", listId);
+
+        try {
+            List<Todo> todos = todoRepository.findAllByListTodos_ListTodoId(listId);
+            log.info("✅ {} todos encontrados", todos.size());
+            return todos;
+        } catch (Exception e) {
+            log.error("❌ Error en getTodosByList: {}", e.getMessage(), e);
+            throw new RuntimeException("Error al obtener tareas: " + e.getMessage());
+        }
     }
 
     // Crear una lista

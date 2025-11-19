@@ -7,8 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/todos")
 public class TodoController {
@@ -35,9 +39,36 @@ public class TodoController {
 
     // Actualizar un ToDo
     @PutMapping("/id/{todoId}")
-    public ResponseEntity<Todo> updateTodo(@PathVariable Long todoId, @RequestBody Todo updatedTodo) {
-        Todo updated = todoService.updateTodo(todoId, updatedTodo);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+    public ResponseEntity<?> updateTodo(
+            @PathVariable Long todoId,
+            @RequestBody Todo updatedTodo) {
+
+        log.info("==> PUT /api/todos/id/{}", todoId);
+        log.debug("📋 Payload recibido: {}", updatedTodo);
+
+        try {
+            Todo updated = todoService.updateTodo(todoId, updatedTodo);
+            log.info("✅ Todo actualizado: {}", updated.getName());
+
+            // ✅ Devuelve un JSON simple (no la entidad completa)
+            Map<String, Object> response = new HashMap<>();
+            response.put("todoId", updated.getTodoId());
+            response.put("name", updated.getName());
+            response.put("description", updated.getDescription());
+            response.put("dueDate", updated.getDueDate());
+            response.put("priority", updated.getPriority());
+
+            if (updated.getListTodos() != null) {
+                response.put("listTodoId", updated.getListTodos().getListTodoId());
+            }
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (RuntimeException e) {
+            log.error("❌ Error actualizando todo: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
     }
 
     // Eliminar un ToDo

@@ -36,9 +36,6 @@ public class Habit {
     @Column(name = "completed", nullable = false)
     private boolean completed;
 
-    @Column(name = "note")
-    private String note;
-
     @Column(name = "goal")
     private int goal; // elegida por el User, está definida por cierta cantidad de rachas (días
                       // completados cierto hábito)

@@ -1,14 +1,49 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-  
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:attr="data-user-id=${userId}">
 <head>
   <meta charset="UTF-8">
-  <title>Padma | To-dos</title>
+  <title>Padma | Lista</title>
   <link rel="stylesheet" th:href="@{/css/home.css}">
   <link rel="stylesheet" th:href="@{/css/todo.css}">
+  <link rel="stylesheet" th:href="@{/css/list.css}">
   <script th:src="@{/js/todo.js}"></script>
   <script th:src="@{/js/list.js}"></script>
 </head>
+<!-- ✅ MODAL EDITAR LISTA -->
+<div id="editListModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Editar Lista</h2>
+    
+    <div class="form-group">
+      <label for="editListName">Nombre</label>
+      <input type="text" id="editListName" maxlength="50" required>
+    </div>
+
+    <div class="form-group">
+      <label for="editListDesc">Descripción</label>
+      <textarea id="editListDesc" maxlength="500" placeholder="Descripción (opcional)"></textarea>
+    </div>
+
+    <div class="modal-buttons">
+      <button id="cancelEditListBtn" class="btn-cancel">Cancelar</button>
+      <button id="saveEditListBtn" class="btn-primary">Guardar Cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ MODAL ELIMINAR LISTA -->
+<div id="deleteListModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>⚠️ Eliminar Lista</h2>
+    <p id="deleteListWarning">¿Estás seguro de que quieres eliminar "<strong id="deleteListName"></strong>"?</p>
+    <p style="color: #999; font-size: 0.9rem;">Esta acción no se puede deshacer.</p>
+
+    <div class="modal-buttons">
+      <button id="cancelDeleteListBtn" class="btn-cancel">Cancelar</button>
+      <button id="confirmDeleteListBtn" class="btn-danger">Eliminar</button>
+    </div>
+  </div>
+</div>
 
 <body th:attr="data-user-id=${userId}">
   <div class="dashboard">
@@ -24,7 +59,7 @@
       <div class="logout"><a th:href="@{/logout}">Salir</a></div>
     </aside>
 
-    <!-- Sidebar secundaria: Listas -->
+    <!-- Sidebar secundaria -->
     <!-- Sidebar secundaria: Listas -->
 <aside class="list-sidebar">
   
@@ -41,9 +76,9 @@
   <!-- ✅ ENCABEZADO DE LISTAS CON BOTÓN DE EDICIÓN -->
   <div class="sidebar-header">
     <h3>Listas</h3>
+   
   </div>
 
-  
 
   <!-- ✅ LISTA DE LISTAS DEL USUARIO -->
   <!-- ✅ LISTA DE LISTAS DEL USUARIO CON BOTONES INDIVIDUALES -->
@@ -67,11 +102,6 @@
 </ul>
 
 
-    <li th:if="${#lists.isEmpty(lists)}">
-      <p>No tienes listas aún.</p>
-    </li>
-  </ul>
-
   <!-- ✅ FORMULARIO CREAR NUEVA LISTA -->
   <form class="new-list-form" id="createListForm">
     <input type="text" id="listName" placeholder="Nueva lista" required maxlength="50">
@@ -81,23 +111,14 @@
 </aside>
 
 
-    <!-- Contenido principal -->
+    
+    <!-- Main content -->
     <main class="main-content">
+      
       <header class="header">
-        <h1>Today's tasks</h1>
-        <p th:text="${currentDate}">Septiembre 28</p>
-      </header>
-
-      <!-- Fechas del mes -->
-      <div class="calendar-strip">
-        <div th:each="day : ${daysOfMonth}">
-          <button class="day-btn" th:text="${day.label}" th:data-date="${day.date}"
-                  th:classappend="${day.isToday} ? 'active' : ''"
-                  th:onclick="'filterByDate(\\'' + ${day.date} + '\\')'"></button>
-        </div>
-      </div>
-
-      <!-- AGREGAR TAREA -->
+        <h1 th:text="${listName}">Lista</h1>
+        <p th:text="${listDescription}">Description</p>
+        <!-- AGREGAR TAREA -->
 <div class="add-task-form">
   <div class="input-group">
     <input type="text" id="taskName" placeholder="Add new task" maxlength="100">
@@ -132,99 +153,31 @@
     </div>
   </div>
 </div>
-
-
+        <p class="list-meta" th:text="'(' + ${todos.size()} + ' tareas)'"></p>
+      </header>
       <!-- Lista de tareas -->
-<section class="todo-list">
-  <h2 th:text="${selectedFilter}">To Do</h2>
-  <ul>
-    <li th:each="todo : ${todos}" class="todo-item-wrapper">
-      <!-- Checkbox y contenido -->
-      <label class="todo-item">
-        <input type="checkbox"
+      <section class="todo-list">
+        <ul>
+          <li th:each="todo : ${todos}" class="todo-item-wrapper">
+            <input type="checkbox"
        th:checked="${todo.completed}"
        th:attr="onchange=|toggleTodo(${todo.todoId}, this)|" />
-        
-        <div class="todo-content">
-          <span class="todo-name" th:text="${todo.name}"></span>
-          <span class="todo-date" th:text="${#temporals.format(todo.dueDate, 'MMM dd')}"></span>
-        </div>
-      </label>
 
-      <!-- Botón menú FUERA del label -->
-      <button class="todo-menu-btn" th:data-todo-id="${todo.todoId}">⋮</button>
+              
+              <div class="todo-content">
+                <span class="todo-name" th:text="${todo.name}"></span>
+                <span class="todo-date" th:text="${#temporals.format(todo.dueDate, 'MMM dd')}"></span>
+              </div>
+            </label>
+          </li>
 
-      <!-- Menú desplegable FUERA del label -->
-      <div class="todo-menu hidden" th:id="'menu-' + ${todo.todoId}">
-        <button class="menu-item edit-btn" th:data-todo-id="${todo.todoId}">✏️ Editar</button>
-        <button class="menu-item delete-btn" th:data-todo-id="${todo.todoId}">🗑️ Eliminar</button>
-      </div>
-    </li>
+          
 
-    <li th:if="${#lists.isEmpty(todos)}" class="empty-state">
-      <p>No hay tareas para este día 🌱</p>
-    </li>
-  </ul>
-</section>
-
-<!-- MODAL EDITAR TAREA-->
-<div id="editModal" class="modal hidden">
-  <div class="modal-content">
-    <h2>Editar Tarea</h2>
-    
-    <div class="form-group">
-      <label for="editTaskName">Nombre</label>
-      <input type="text" id="editTaskName" maxlength="100">
-    </div>
-
-    <div class="form-group">
-      <label for="editTaskDesc">Descripción</label>
-      <textarea id="editTaskDesc"></textarea>
-    </div>
-
-    <div style="display: flex; gap: 15px;">
-      <div class="form-group" style="flex: 1;">
-        <label for="editTaskDate">Fecha</label>
-        <input type="date" id="editTaskDate">
-      </div>
-      
-
-      <div class="form-group" style="flex: 1;">
-        <label for="editTaskPriority">Prioridad</label>
-        <select id="editTaskPriority">
-          <option value="Not Urgent but Important">Not Urgent but Important</option>
-          <option value="Urgent and Important">Urgent and Important</option>
-          <option value="Urgent but not Important">Urgent but not Important</option>
-          <option value="Not Urgent and Not Important">Not Urgent and Not Important</option>
-        </select>
-      </div>
-
-
-<div class="form-group"  style="flex: 1;">
-  <label for="editTaskList">Lista</label>
-  <select id="editTaskList">
-    <option value="">Sin lista</option>
-    <option th:each="list : ${lists}" 
-            th:value="${list.listTodoId}" 
-            th:text="${list.name}"></option>
-  </select>
-</div>
-
-    <div class="modal-buttons">
-      <button id="cancelEditBtn" class="btn-cancel">Cancelar</button>
-      <button id="saveEditBtn" class="btn-create">Guardar Cambios</button>
-    </div>
-  </div>
-</div>
-
-
-          <li th:if="${#lists.isEmpty(todos)}">
-            <p>No hay tareas para este día 🌱</p>
+          <li th:if="${#lists.isEmpty(todos)}" class="empty-state">
+            <p>No hay tareas en esta lista 🌱</p>
           </li>
         </ul>
       </section>
-
-      
     </main>
   </div>
 </body>

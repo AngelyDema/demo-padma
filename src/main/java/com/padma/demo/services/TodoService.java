@@ -84,6 +84,13 @@ public class TodoService {
         existingTodo.setDescription(updatedTodo.getDescription());
         existingTodo.setDueDate(updatedTodo.getDueDate());
         existingTodo.setPriority(updatedTodo.getPriority());
+
+        // Procesar la lista si viene en el payload
+        if (updatedTodo.getListTodos() != null && updatedTodo.getListTodos().getListTodoId() != null) {
+            ListTodo list = listTodoRepository.findByListTodoId(updatedTodo.getListTodos().getListTodoId())
+                    .orElseThrow(() -> new RuntimeException("List not found"));
+            existingTodo.setListTodos(list);
+        }
         return todoRepository.save(existingTodo);
     }
 

@@ -1,0 +1,340 @@
+/* ===== HEADER DE LISTA ===== */
+.header {
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  color: #414040;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.list-meta {
+  color: #999;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* ===== LISTA DE TAREAS ===== */
+.todo-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.todo-item-wrapper {
+  margin-bottom: 10px;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: white;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.todo-item:hover {
+  background: #f9f9f9;
+  border-color: #f7b1c3;
+  box-shadow: 0 2px 8px rgba(247, 177, 195, 0.2);
+}
+
+.todo-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #f7b1c3;
+  flex-shrink: 0;
+}
+
+.todo-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+  gap: 15px;
+}
+
+.todo-name {
+  color: #414040;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.todo-date {
+  background: #f0bfd2;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-style: italic;
+}
+
+.empty-state p {
+  margin: 0;
+}
+
+/* ===== BOTÓN MENÚ EN TAREAS ===== */
+.todo-item {
+  position: relative;
+}
+
+.todo-menu-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 5px 8px;
+  color: #999;
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+
+.todo-menu-btn:hover {
+  color: #414040;
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+/* ===== MENÚ DESPLEGABLE ===== */
+.todo-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  min-width: 150px;
+  margin-top: 5px;
+}
+
+.todo-menu.hidden {
+  display: none;
+}
+
+.menu-item {
+  width: 100%;
+  padding: 10px 15px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:hover {
+  background: #f9f9f9;
+}
+
+.edit-btn:hover {
+  color: #2196f3;
+}
+
+.delete-btn:hover {
+  color: #ff4444;
+}
+
+/* ===== MODAL EDITAR ===== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  color: #414040;
+  font-size: 1.5rem;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #dcdcdc;
+}
+
+
+/* ===== MODAL GENERAL ===== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  color: #414040;
+  font-size: 1.3rem;
+}
+
+.modal-content p {
+  color: #666;
+  margin: 15px 0;
+  line-height: 1.5;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #414040;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 10px 12px;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #f7b1c3;
+  box-shadow: 0 0 0 3px rgba(247, 177, 195, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #dcdcdc;
+}
+
+.btn-primary,
+.btn-cancel,
+.btn-danger {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.95rem;
+}
+
+.btn-primary {
+  background: #f7b1c3;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #f09ab0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(247, 177, 195, 0.3);
+}
+
+.btn-cancel {
+  background: #f0f0f0;
+  color: #414040;
+  border: 1px solid #dcdcdc;
+}
+
+.btn-cancel:hover {
+  background: #e8e8e8;
+}
+
+.btn-danger {
+  background: #ff6b6b;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #ff5252;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
