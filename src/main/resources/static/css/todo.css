@@ -1,11 +1,4 @@
-:root {
-  --color-background: #fffde9;
-  --color-sidebar: #f0bfd2;
-  --color-subsidebar: #fefcdf;
-  --color-text-dark: #333;
-  --color-accent: #c25b6c;
-  --color-date: #c9fcb8;
-}
+
 
 * {
   margin: 0;
@@ -296,22 +289,6 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
-.list-item-menu .menu-item:last-child {
-  border-bottom: none;
-}
-
-.list-item-menu .menu-item:hover {
-  background: #f9f9f9;
-}
-
-.list-item-menu .edit-list-btn:hover {
-  color: #2196f3;
-}
-
-.list-item-menu .delete-list-btn:hover {
-  color: #ff4444;
-}
-
 
 /* === MAIN CONTENT === */
 .main-content {
@@ -370,12 +347,6 @@ body {
   font-size: 1rem;
 }
 
-.todo-list input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--color-accent);
-  cursor: pointer;
-}
 
 /* ===== FORMULARIO AGREGAR TAREA ===== */
 .add-task-form {
@@ -548,34 +519,7 @@ body {
 .new-list-form button:hover {
   background: #f5a80f;
 }
-/* ===== CONTENEDOR DE TAREA ===== */
-.todo-item-wrapper {
-  position: relative;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-}
 
-/* ===== LABEL DE TAREA ===== */
-.todo-item {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  background: white;
-  border: 1px solid #dcdcdc;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.todo-item:hover {
-  background: #f9f9f9;
-  border-color: #f7b1c3;
-  box-shadow: 0 2px 8px rgba(247, 177, 195, 0.2);
-}
 
 /* ===== BOTÓN MENÚ ===== */
 .todo-menu-btn {
@@ -647,21 +591,6 @@ body {
 .menu-item:not(:last-child) {
   border-bottom: 1px solid #f0f0f0;
 }
-
-.menu-item:hover {
-  background: #f9f9f9;
-}
-
-.edit-btn:hover {
-  color: #2196f3;
-  background: #e3f2fd;
-}
-
-.delete-btn:hover {
-  color: #ff4444;
-  background: #ffebee;
-}
-
 
 /* ===== MODAL EDITAR ===== */
 .modal {

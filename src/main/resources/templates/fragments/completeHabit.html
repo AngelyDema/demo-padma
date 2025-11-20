@@ -1,0 +1,21 @@
+<!-- ✅ MODAL PARA COMPLETAR HÁBITO -->
+<script defer th:src="@{/js/habit.js}"></script>
+
+<div th:fragment="completeHabitModal" id="completeHabitModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Completar Hábito</h2>
+    <p id="modalHabitTitle" class="habit-modal-title">Nombre del hábito</p>
+    
+    <div class="form-group">
+      <label for="habitNote">Nota (¿Cómo te fue?)</label>
+      <textarea id="habitNote" 
+                placeholder="Añade una nota sobre cómo completaste este hábito..."
+                maxlength="500"></textarea>
+    </div>
+
+    <div class="modal-buttons">
+      <button id="cancelCompleteBtn" class="btn-cancel">Cancelar</button>
+      <button id="saveCompleteBtn" class="btn-primary">Guardar ✨</button>
+    </div>
+  </div>
+</div>

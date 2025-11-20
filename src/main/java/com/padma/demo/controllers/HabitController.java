@@ -114,4 +114,28 @@ public class HabitController {
         }
     }
 
+    @PutMapping("/{habitId}/uncomplete")
+    public ResponseEntity<?> unmarkHabitAsCompleted(@PathVariable Long habitId) {
+        log.info("==> PUT /api/habits/{}/uncomplete", habitId);
+
+        try {
+            Habit updatedHabit = habitService.unmarkHabitAsCompleted(habitId);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("habitId", updatedHabit.getHabitId());
+            response.put("title", updatedHabit.getTitle());
+            response.put("completed", updatedHabit.isCompleted());
+            response.put("streak",
+                    updatedHabit.getHabitHistory() != null ? updatedHabit.getHabitHistory().getCurrentStreak() : 0);
+
+            log.info("✅ Hábito desmarcado: {}", updatedHabit.getTitle());
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            log.error("❌ Error: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
 }

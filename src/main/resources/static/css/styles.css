@@ -15,10 +15,12 @@
   --color-text-dark: #414040;
   --color-placeholder: #ffffff;
   --color-link: #ceffec;
+  --color-checkbox: rgb(194, 91, 108);
   --color-link-hover: #ffffff;
   --color-google: rgba(255, 255, 255, 0.75);
   --color-border: #dcdcdc;
   --color-shadow: rgba(31, 38, 135, 0.37);
+  
 }
 
 /* 🧩 Tipografía general */
@@ -28,6 +30,8 @@ body {
   color: var(--color-text-light);
   background-color: #fefefe;
 }
+
+
 
 /* 🌸 Enlaces generales */
 a {

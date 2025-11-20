@@ -14,7 +14,9 @@ import com.padma.demo.services.HabitHistoryService;
 import com.padma.demo.services.HabitCompletionService;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class HabitService {
 
@@ -74,6 +76,23 @@ public class HabitService {
         habit.setCompleted(true);
         HabitHistory history = habitHistoryService.updateStreak(habit);
         habitCompletionService.createCompletion(history, note);
+
+        return habitRepository.save(habit);
+    }
+
+    // NUEVO MÉTODO para desmarcar hábito
+    @Transactional
+    public Habit unmarkHabitAsCompleted(Long habitId) {
+        log.info("❌ Desmarcando hábito: {}", habitId);
+
+        Habit habit = habitRepository.findById(habitId)
+                .orElseThrow(() -> new RuntimeException("Hábito no encontrado con ID: " + habitId));
+
+        // Desmarcar
+        habit.setCompleted(false);
+
+        // Actualizar streak (decrement logic)
+        habitHistoryService.updateStreakOnUncompleted(habit);
 
         return habitRepository.save(habit);
     }

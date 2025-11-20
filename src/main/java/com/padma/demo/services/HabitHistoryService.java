@@ -71,4 +71,35 @@ public class HabitHistoryService {
 
         return habitHistoryRepository.save(history);
     }
+
+    // Actualizar racha cuando se DESCOMPLETA (uncheck)
+    public HabitHistory updateStreakOnUncompleted(Habit habit) {
+        log.info("📊 Actualizando racha (DESCOMPLETADO) para hábito: {}", habit.getTitle());
+
+        HabitHistory history = habitHistoryRepository
+                .findByHabit_HabitId(habit.getHabitId())
+                .orElseThrow(() -> new RuntimeException("HabitHistory no encontrado"));
+
+        LocalDate today = LocalDate.now();
+
+        // ✅ Eliminar la fecha de hoy de completadas
+        if (history.getCompletionDates() != null) {
+            history.getCompletionDates().remove(today);
+            log.info("🗑️ Fecha de hoy eliminada de completadas");
+
+            // ✅ Recalcular la racha
+            LocalDate yesterday = today.minusDays(1);
+            if (history.getCompletionDates().contains(yesterday)) {
+                // Si ayer sí fue completado, la racha sigue siendo válida (pero no incrementa
+                // hoy)
+                log.info("ℹ️ Racha se mantiene porque ayer fue completado");
+            } else {
+                // Si ayer NO fue completado, resetea la racha
+                history.setCurrentStreak(0);
+                log.info("🔄 Racha reiniciada a 0 (no hay continuidad)");
+            }
+        }
+
+        return habitHistoryRepository.save(history);
+    }
 }

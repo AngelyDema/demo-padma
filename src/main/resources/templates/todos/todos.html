@@ -6,8 +6,12 @@
   <title>Padma | To-dos</title>
   <link rel="stylesheet" th:href="@{/css/home.css}">
   <link rel="stylesheet" th:href="@{/css/todo.css}">
+    <link rel="stylesheet" th:href="@{/css/todos.css}">
+
   <script th:src="@{/js/todo.js}"></script>
   <script th:src="@{/js/list.js}"></script>
+  <link rel="stylesheet" th:href="@{/css/syles.css}">
+
 </head>
 
 <body th:attr="data-user-id=${userId}">
@@ -18,10 +22,10 @@
       <nav class="menu">
         <a th:href="@{/home}">Home</a>
         <a th:href="@{/todos}" class="active">To-dos</a>
-        <a th:href="@{/habits}">Hábitos</a>
-        <a th:href="@{/profile}">Perfil</a>
+        <a th:href="@{/habits}">Habits</a>
+        <a th:href="@{/profile}">Profile</a>
       </nav>
-      <div class="logout"><a th:href="@{/logout}">Salir</a></div>
+      <div class="logout"><a th:href="@{/logout}">Log out</a></div>
     </aside>
 
     <!-- Sidebar secundaria: Listas -->
@@ -62,15 +66,10 @@
   </li>
 
   <li th:if="${#lists.isEmpty(lists)}">
-    <p>No tienes listas aún.</p>
+    <p>No lists yet.</p>
   </li>
 </ul>
 
-
-    <li th:if="${#lists.isEmpty(lists)}">
-      <p>No tienes listas aún.</p>
-    </li>
-  </ul>
 
   <!-- ✅ FORMULARIO CREAR NUEVA LISTA -->
   <form class="new-list-form" id="createListForm">
@@ -112,23 +111,23 @@
 
   <!-- Sección expandible de detalles -->
   <div id="moreDetails" class="more-details hidden">
-    <textarea id="taskDesc" placeholder="Descripción (opcional)"></textarea>
+    <textarea id="taskDesc" placeholder="Description (opcional)"></textarea>
     
     <select id="taskList">
-      <option value="">-- Sin lista --</option>
+      <option value="">-- Without list --</option>
       <option th:each="list : ${lists}" th:value="${list.listTodoId}" th:text="${list.name}"></option>
     </select>
 
-    <select id="taskPriority">
-      <option value="Not Urgent but Important" selected>Not Urgent but Important</option>
-      <option value="Urgent and Important">Urgent and Important</option>
-      <option value="Urgent but not Important">Urgent but not Important</option>
-      <option value="Not Urgent and Not Important">Not Urgent and Not Important</option>
-    </select>
+    <select id="taskPriority" class="priority-select">
+  <option value="Not Urgent but Important" data-color="#FFC107">Not Urgent but Important</option>
+  <option value="Urgent and Important" data-color="#FF6B6B">Urgent and Important</option>
+  <option value="Urgent but not Important" data-color="#FF9500">Urgent but not Important</option>
+  <option value="Not Urgent and Not Important" data-color="#90EE90">Not Urgent and Not Important</option>
+</select>
 
     <div class="form-buttons">
-      <button id="cancelBtn" class="btn-cancel">Cancelar</button>
-      <button id="createBtn" class="btn-create">Crear Tarea</button>
+      <button id="cancelBtn" class="btn-cancel">Cancel</button>
+      <button id="createBtn" class="btn-create">New task</button>
     </div>
   </div>
 </div>
@@ -156,13 +155,13 @@
 
       <!-- Menú desplegable FUERA del label -->
       <div class="todo-menu hidden" th:id="'menu-' + ${todo.todoId}">
-        <button class="menu-item edit-btn" th:data-todo-id="${todo.todoId}">✏️ Editar</button>
-        <button class="menu-item delete-btn" th:data-todo-id="${todo.todoId}">🗑️ Eliminar</button>
+        <button class="menu-item edit-btn" th:data-todo-id="${todo.todoId}">Edit</button>
+        <button class="menu-item delete-btn" th:data-todo-id="${todo.todoId}">Delete</button>
       </div>
     </li>
 
     <li th:if="${#lists.isEmpty(todos)}" class="empty-state">
-      <p>No hay tareas para este día 🌱</p>
+      <p>No tasks for today 🌱</p>
     </li>
   </ul>
 </section>
@@ -170,40 +169,40 @@
 <!-- MODAL EDITAR TAREA-->
 <div id="editModal" class="modal hidden">
   <div class="modal-content">
-    <h2>Editar Tarea</h2>
+    <h2>Edit Task</h2>
     
     <div class="form-group">
-      <label for="editTaskName">Nombre</label>
+      <label for="editTaskName">Name</label>
       <input type="text" id="editTaskName" maxlength="100">
     </div>
 
     <div class="form-group">
-      <label for="editTaskDesc">Descripción</label>
+      <label for="editTaskDesc">Description</label>
       <textarea id="editTaskDesc"></textarea>
     </div>
 
     <div style="display: flex; gap: 15px;">
       <div class="form-group" style="flex: 1;">
-        <label for="editTaskDate">Fecha</label>
+        <label for="editTaskDate">Date</label>
         <input type="date" id="editTaskDate">
       </div>
       
 
       <div class="form-group" style="flex: 1;">
-        <label for="editTaskPriority">Prioridad</label>
-        <select id="editTaskPriority">
-          <option value="Not Urgent but Important">Not Urgent but Important</option>
-          <option value="Urgent and Important">Urgent and Important</option>
-          <option value="Urgent but not Important">Urgent but not Important</option>
-          <option value="Not Urgent and Not Important">Not Urgent and Not Important</option>
-        </select>
+        <label for="editTaskPriority">Priority</label>
+        <select id="taskPriority" class="priority-select">
+  <option value="Not Urgent but Important" data-color="#FFC107">Not Urgent but Important</option>
+  <option value="Urgent and Important" data-color="#FF6B6B">Urgent and Important</option>
+  <option value="Urgent but not Important" data-color="#FF9500">Urgent but not Important</option>
+  <option value="Not Urgent and Not Important" data-color="#90EE90">Not Urgent and Not Important</option>
+</select>
       </div>
 
 
 <div class="form-group"  style="flex: 1;">
-  <label for="editTaskList">Lista</label>
+  <label for="editTaskList">List</label>
   <select id="editTaskList">
-    <option value="">Sin lista</option>
+    <option value="">Without list</option>
     <option th:each="list : ${lists}" 
             th:value="${list.listTodoId}" 
             th:text="${list.name}"></option>
@@ -211,19 +210,11 @@
 </div>
 
     <div class="modal-buttons">
-      <button id="cancelEditBtn" class="btn-cancel">Cancelar</button>
-      <button id="saveEditBtn" class="btn-create">Guardar Cambios</button>
+      <button id="cancelEditBtn" class="btn-cancel">Cancel</button>
+      <button id="saveEditBtn" class="btn-create">Save changes</button>
     </div>
   </div>
 </div>
-
-
-          <li th:if="${#lists.isEmpty(todos)}">
-            <p>No hay tareas para este día 🌱</p>
-          </li>
-        </ul>
-      </section>
-
       
     </main>
   </div>

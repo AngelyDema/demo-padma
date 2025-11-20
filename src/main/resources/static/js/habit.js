@@ -221,55 +221,63 @@ if (createAreaBtn && createAreaModal) {
 
 // ===== COMPLETAR HÁBITO =====
 document.addEventListener('DOMContentLoaded', function() {
-  
   const habitCheckboxes = document.querySelectorAll('.habit-checkbox');
   const completeHabitModal = document.getElementById('completeHabitModal');
   const modalHabitTitle = document.getElementById('modalHabitTitle');
   const habitNote = document.getElementById('habitNote');
   const saveCompleteBtn = document.getElementById('saveCompleteBtn');
   const cancelCompleteBtn = document.getElementById('cancelCompleteBtn');
-  
+
   let currentHabitId = null;
   let currentHabitTitle = null;
 
+  // ✅ Escuchar cambios en checkboxes
   habitCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', function(e) {
+    checkbox.addEventListener('change', function() {
       currentHabitId = this.getAttribute('data-habit-id');
-      
-      // Obtener el nombre del hábito del DOM
       currentHabitTitle = this.closest('.habit-item')
-                              .querySelector('.habit-title').textContent;
-      
-      console.log('✅ Hábito seleccionado:', currentHabitTitle);
-      
+                            .querySelector('.habit-title').textContent;
+
+      console.log('✅ Checkbox changed - HabitId:', currentHabitId, 'Checked:', this.checked);
+
       if (this.checked) {
-        // Abrir modal para completar
+        // ✅ Si se MARCA → Abrir modal para agregar nota
         modalHabitTitle.textContent = currentHabitTitle;
         habitNote.value = '';
         completeHabitModal.classList.remove('hidden');
         habitNote.focus();
       } else {
-        // Si desmarca, solo desmarca sin hacer nada
-        console.log('📌 Hábito desmarcado');
+        // ✅ Si se DESMARCA → Llamar endpoint uncomplete
+        fetch(`/api/habits/${currentHabitId}/uncomplete`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        .then(res => res.json())
+        .then(data => {
+          console.log('✅ Hábito desmarcado:', data);
+          console.log('📊 Nueva racha:', data.streak);
+          setTimeout(() => location.reload(), 500);
+        })
+        .catch(err => {
+          console.error('❌ Error:', err);
+          this.checked = true; // Revertir si hay error
+          alert('Error al desmarcar el hábito');
+        });
       }
     });
   });
 
-  // ===== GUARDAR COMPLETACIÓN =====
+  // ✅ GUARDAR COMPLETACIÓN con nota
   saveCompleteBtn.addEventListener('click', function() {
     const note = habitNote.value.trim();
-    
+
     if (!note) {
       alert('Por favor añade una nota');
       habitNote.focus();
       return;
     }
 
-    const payload = {
-      note: note
-    };
-
-    console.log('📤 Guardando completación:', payload);
+    const payload = { note: note };
 
     fetch(`/api/habits/${currentHabitId}/complete`, {
       method: 'POST',
@@ -283,10 +291,10 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('❌ Error: ' + data.error);
         return;
       }
-      
+
       console.log('✅ Hábito completado:', data);
       alert('✨ ¡Hábito completado! Racha: ' + data.streak);
-      
+
       completeHabitModal.classList.add('hidden');
       setTimeout(() => location.reload(), 800);
     })
@@ -296,26 +304,24 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // ===== CANCELAR =====
+  // ✅ CANCELAR
   cancelCompleteBtn.addEventListener('click', function() {
     completeHabitModal.classList.add('hidden');
     currentHabitId = null;
     habitNote.value = '';
     
-    // Desmarcar el checkbox
-    document.querySelectorAll('.habit-checkbox').forEach(cb => {
-      if (cb.getAttribute('data-habit-id') == currentHabitId) {
-        cb.checked = false;
-      }
-    });
+    // ✅ Desmarcar el checkbox también
+    const checkbox = document.querySelector(`[data-habit-id="${currentHabitId}"]`);
+    if (checkbox) checkbox.checked = false;
   });
 
-  // Cerrar modal al hacer click afuera
+  // ✅ Cerrar modal al click fuera
   completeHabitModal.addEventListener('click', function(e) {
     if (e.target === completeHabitModal) {
       this.classList.add('hidden');
     }
   });
 });
+
 
 
