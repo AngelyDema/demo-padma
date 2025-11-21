@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import com.padma.demo.repository.HabitRepository;
+import com.padma.demo.models.HabitHistory;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDate;
 import java.util.HashMap;
 
 @Slf4j
@@ -19,10 +21,12 @@ import java.util.HashMap;
 @RequestMapping("/api/habits")
 public class HabitController {
 
+    private final HabitRepository habitRepository;
     private final HabitService habitService;
 
-    public HabitController(HabitService habitService) {
+    public HabitController(HabitService habitService, HabitRepository habitRepository) {
         this.habitService = habitService;
+        this.habitRepository = habitRepository;
     }
 
     // Obtener todos los hábitos de un usuario
@@ -94,7 +98,6 @@ public class HabitController {
 
             Habit updatedHabit = habitService.markHabitAsCompleted(habitId, note);
 
-            // ✅ Devolver solo datos necesarios (sin relaciones circulares)
             Map<String, Object> response = new HashMap<>();
             response.put("habitId", updatedHabit.getHabitId());
             response.put("title", updatedHabit.getTitle());
@@ -109,6 +112,13 @@ public class HabitController {
 
         } catch (RuntimeException e) {
             log.error("❌ Error: {}", e.getMessage(), e);
+
+            // ✅ NEW: Return appropriate status code
+            if (e.getMessage().contains("ya fue completado hoy")) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Map.of("error", e.getMessage(), "alreadyCompleted", true));
+            }
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", e.getMessage()));
         }
@@ -138,4 +148,36 @@ public class HabitController {
         }
     }
 
+    // ✅ SIMPLIFIED: Just return current state, don't modify
+    @GetMapping("/validate-completion-status/{userId}")
+    public ResponseEntity<?> validateCompletionStatus(@PathVariable Long userId) {
+        log.info("==> GET /api/habits/validate-completion-status/{}", userId);
+
+        try {
+            habitService.resetDailyCompletionFlags(userId);
+
+            List<Habit> habits = habitService.getHabitsByUserId(userId);
+            Map<Long, Boolean> completionStatus = new HashMap<>();
+
+            LocalDate today = LocalDate.now();
+
+            habits.forEach(habit -> {
+                HabitHistory history = habit.getHabitHistory();
+                boolean completedToday = history != null
+                        && history.getCompletionDates() != null
+                        && history.getCompletionDates().contains(today);
+
+                completionStatus.put(habit.getHabitId(), completedToday);
+            });
+
+            return ResponseEntity.ok(Map.of(
+                    "completionStatus", completionStatus,
+                    "validated", true));
+
+        } catch (Exception e) {
+            log.error("❌ Error validando estado: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al validar estado de completados"));
+        }
+    }
 }

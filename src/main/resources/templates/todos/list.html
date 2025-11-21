@@ -3,15 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <title>Padma | Lista</title>
+  <link rel="stylesheet" th:href="@{/css/layout.css}">
   <link rel="stylesheet" th:href="@{/css/todo.css}">
   <link rel="stylesheet" th:href="@{/css/list.css}">
-  <link rel="stylesheet" th:href="@{/css/home.css}">
     <link rel="stylesheet" th:href="@{/css/todos.css}">
 
-
-  <script th:src="@{/js/todo.js}"></script>
-  <script th:src="@{/js/list.js}"></script>
 </head>
+<body th:attr="data-user-id=${userId}">
+  <div class="dashboard">
+    <!-- Sidebar principal -->
+    <aside class="sidebar">
+      <div class="logo"><h2>PADMA</h2></div>
+      <nav class="menu">
+        <a th:href="@{/home}">Home</a>
+        <a th:href="@{/todos}" class="active">To-dos</a>
+        <a th:href="@{/habits}">Habits</a>
+        <a th:href="@{/profile}">Profile</a>
+      </nav>
+      <div class="logout"><a th:href="@{/logout}">Log out</a></div>
+    </aside>
+
+    <!-- Sidebar secundaria -->
+    <!-- Sidebar secundaria: Listas -->
+<aside class="list-sidebar">
+  
+  <!-- ✅ FILTROS (Today, Week, All) -->
+  <ul class="list-group">
+    <li><a th:href="@{/todos/today}">Today</a></li>
+    <li><a th:href="@{/todos/week}">Next 7 days</a></li>
+    <li><a th:href="@{/todos/all}">All tasks</a></li>
+  </ul>
+
+  <!-- ✅ SEPARADOR VISUAL -->
+  <div class="sidebar-divider"></div>
+
+  <!-- ✅ ENCABEZADO DE LISTAS CON BOTÓN DE EDICIÓN -->
+  <div class="sidebar-header">
+    <h3>Listas</h3>
+   
+  </div>
+
 <!-- ✅ MODAL EDITAR LISTA -->
 <div id="editListModal" class="modal hidden">
   <div class="modal-content">
@@ -37,51 +68,16 @@
 <!-- ✅ MODAL ELIMINAR LISTA -->
 <div id="deleteListModal" class="modal hidden">
   <div class="modal-content">
-    <h2>⚠️ Eliminar Lista</h2>
-    <p id="deleteListWarning">¿Estás seguro de que quieres eliminar "<strong id="deleteListName"></strong>"?</p>
-    <p style="color: #999; font-size: 0.9rem;">Esta acción no se puede deshacer.</p>
+    <h2>⚠️ Delete List</h2>
+    <p id="deleteListWarning">Do you want to delete this list"<strong id="deleteListName"></strong>"?</p>
+    <p style="color: #999; font-size: 0.9rem;">. This action is irreversible</p>
 
     <div class="modal-buttons">
-      <button id="cancelDeleteListBtn" class="btn-cancel">Cancelar</button>
+      <button id="cancelDeleteListBtn" class="btn-cancel">Cancel</button>
       <button id="confirmDeleteListBtn" class="btn-danger">Eliminar</button>
     </div>
   </div>
 </div>
-
-<body th:attr="data-user-id=${userId}">
-  <div class="dashboard">
-    <!-- Sidebar principal -->
-    <aside class="sidebar">
-      <div class="logo"><h2>PADMA</h2></div>
-      <nav class="menu">
-        <a th:href="@{/home}">Home</a>
-        <a th:href="@{/todos}" class="active">To-dos</a>
-        <a th:href="@{/habits}">Hábitos</a>
-        <a th:href="@{/profile}">Perfil</a>
-      </nav>
-      <div class="logout"><a th:href="@{/logout}">Salir</a></div>
-    </aside>
-
-    <!-- Sidebar secundaria -->
-    <!-- Sidebar secundaria: Listas -->
-<aside class="list-sidebar">
-  
-  <!-- ✅ FILTROS (Today, Week, All) -->
-  <ul class="list-group">
-    <li><a th:href="@{/todos/today}">Today</a></li>
-    <li><a th:href="@{/todos/week}">Next 7 days</a></li>
-    <li><a th:href="@{/todos/all}">All tasks</a></li>
-  </ul>
-
-  <!-- ✅ SEPARADOR VISUAL -->
-  <div class="sidebar-divider"></div>
-
-  <!-- ✅ ENCABEZADO DE LISTAS CON BOTÓN DE EDICIÓN -->
-  <div class="sidebar-header">
-    <h3>Listas</h3>
-   
-  </div>
-
 
   <!-- ✅ LISTA DE LISTAS DEL USUARIO -->
   <!-- ✅ LISTA DE LISTAS DEL USUARIO CON BOTONES INDIVIDUALES -->
@@ -94,13 +90,13 @@
     
     <!-- Menú desplegable para cada lista -->
     <div class="list-item-menu hidden" th:id="'listmenu-' + ${list.listTodoId}">
-      <button class="menu-item edit-list-btn" th:data-list-id="${list.listTodoId}">✏️ Editar</button>
-      <button class="menu-item delete-list-btn" th:data-list-id="${list.listTodoId}">🗑️ Eliminar</button>
+      <button class="menu-item edit-list-btn" th:data-list-id="${list.listTodoId}">Edit</button>
+      <button class="menu-item delete-list-btn" th:data-list-id="${list.listTodoId}">Delete</button>
     </div>
   </li>
 
   <li th:if="${#lists.isEmpty(lists)}">
-    <p>No tienes listas aún.</p>
+    <p>No lists for here</p>
   </li>
 </ul>
 
@@ -112,14 +108,12 @@
   </form>
 
 </aside>
-
-
     
     <!-- Main content -->
     <main class="main-content">
       
       <header class="header">
-        <h1 th:text="${listName}">Lista</h1>
+        <h1 th:text="${listName}">List</h1>
         <p th:text="${listDescription}">Description</p>
         <!-- AGREGAR TAREA -->
 <div class="add-task-form">
@@ -139,20 +133,20 @@
     <textarea id="taskDesc" placeholder="Descripción (opcional)"></textarea>
     
     <select id="taskList">
-      <option value="">-- Sin lista --</option>
+      <option value="">-- Without list --</option>
       <option th:each="list : ${lists}" th:value="${list.listTodoId}" th:text="${list.name}"></option>
     </select>
 
-    <select id="taskPriority">
-      <option value="Not Urgent but Important" selected>Not Urgent but Important</option>
-      <option value="Urgent and Important">Urgent and Important</option>
-      <option value="Urgent but not Important">Urgent but not Important</option>
-      <option value="Not Urgent and Not Important">Not Urgent and Not Important</option>
-    </select>
+    <select id="taskPriority" class="priority-select">
+  <option value="Not Urgent but Important" data-color="#FFC107">Not Urgent but Important</option>
+  <option value="Urgent and Important" data-color="#FF6B6B">Urgent and Important</option>
+  <option value="Urgent but not Important" data-color="#FF9500">Urgent but not Important</option>
+  <option value="Not Urgent and Not Important" data-color="#90EE90">Not Urgent and Not Important</option>
+</select>
 
     <div class="form-buttons">
-      <button id="cancelBtn" class="btn-cancel">Cancelar</button>
-      <button id="createBtn" class="btn-create">Crear Tarea</button>
+      <button id="cancelBtn" class="btn-cancel">Cancel</button>
+      <button id="createBtn" class="btn-create">New task</button>
     </div>
   </div>
 </div>
@@ -163,25 +157,35 @@
         <ul>
           <li th:each="todo : ${todos}" class="todo-item-wrapper">
             <input type="checkbox"
-       th:checked="${todo.completed}"
-       th:attr="onchange=|toggleTodo(${todo.todoId}, this)|" />
-
-              
+          th:checked="${todo.completed}"
+          th:attr="onchange=|toggleTodo(${todo.todoId}, this)|" />
               <div class="todo-content">
                 <span class="todo-name" th:text="${todo.name}"></span>
                 <span class="todo-date" th:text="${#temporals.format(todo.dueDate, 'MMM dd')}"></span>
               </div>
             </label>
+            <!-- Botón menú -->
+      <button class="todo-menu-btn" th:data-todo-id="${todo.todoId}">⋮</button>
+      <!-- Menú desplegable-->
+      <div class="todo-menu hidden" th:id="'menu-' + ${todo.todoId}">
+        <button class="menu-item edit-btn" th:data-todo-id="${todo.todoId}">Edit</button>
+        <button class="menu-item delete-btn" th:data-todo-id="${todo.todoId}">Delete</button>
+      </div>
           </li>
 
           
 
           <li th:if="${#lists.isEmpty(todos)}" class="empty-state">
-            <p>No hay tareas en esta lista 🌱</p>
+            <p>No task in this list 🌱</p>
           </li>
         </ul>
       </section>
     </main>
   </div>
+
+<div th:replace="fragments/editTodo :: editTodo"></div>
+  <script defer th:src="@{/js/list.js}"></script>
+  <script defer th:src="@{/js/todo.js}"></script>
 </body>
+
 </html>

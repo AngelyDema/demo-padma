@@ -41,56 +41,6 @@ color: var(--color-text-dark);
   font-weight: 650;
 }
 
-/* Layout general */
-.dashboard {
-  display: flex;
-  height: 100vh;
-}
-
-/* Sidebar */
-.sidebar {
-  width: 230px;
-  background: var(--color-primary);
-  color: var(--color-text-light);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 1.5rem;
-  box-shadow: 2px 0 10px var(--color-shadow);
-  transition: all 0.3s ease;
-}
-
-.sidebar .logo {
-  text-align: center;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-.sidebar .menu a {
-  display: block;
-  color: var(--color-text-light);
-  padding: 0.8rem;
-  text-decoration: none;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
-  transition: background 0.3s ease;
-}
-
-.sidebar .menu a:hover,
-.sidebar .menu a.active {
-  background: var(--color-primary-hover);
-}
-
-.logout {
-  text-align: center;
-  margin-top: 1rem;
-}
-
-.logout a {
-  color: var(--color-text-light);
-  text-decoration: none;
-  font-weight: 500;
-}
 /* Main content */
 .content {
   flex: 1;

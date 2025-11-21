@@ -29,4 +29,15 @@ public class HabitCompletionService {
     public List<HabitCompletion> getCompletionsByHistory(Long habitHistoryId) {
         return habitCompletionRepository.findByHabitHistories_HabitHistoryId(habitHistoryId);
     }
+
+    // ✅ NEW: Delete today's completion when unchecking
+    public void deleteTodayCompletion(Long habitHistoryId) {
+        LocalDate today = LocalDate.now();
+        List<HabitCompletion> completions = habitCompletionRepository
+                .findByHabitHistories_HabitHistoryId(habitHistoryId);
+
+        completions.stream()
+                .filter(c -> c.getDateCompleted().equals(today))
+                .forEach(habitCompletionRepository::delete);
+    }
 }

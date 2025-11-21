@@ -3,17 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Padma | Home</title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
     <link rel="stylesheet" th:href="@{/css/home.css}">
     <link rel="stylesheet" th:href="@{/css/modal.css}">
     <link rel="stylesheet" th:href="@{/css/todos.css}">
+     <link rel="stylesheet" th:href="@{/css/habits.css}">
 
 
-
-
-
-    <script defer th:src="@{/js/home.js}"></script>
-    <script defer th:src="@{/js/habit.js}"></script>
-    <script defer th:src="@{/js/todo.js}"></script>
 
 </head>
 
@@ -49,74 +45,69 @@
                 <p class = "summary">Today's Summary</p>
 
              <!-- Sección de Tareas -->
+<!-- Sección de Tareas -->
 <div class="tasks-summary">
   <p class="title">Today's tasks</p>
   
   <div th:if="${todos != null and todos.size() > 0}">
-    <section class="todo-list">
-      <ul>
-        <li th:each="todo : ${todos}" 
-            class="todo-item-wrapper"
-            th:classappend="${todo.completed} ? ' completed' : ''">
+    <ul class="todo-list">
+      <li th:each="todo : ${todos}" 
+          class="todo-item-wrapper"
+          th:classappend="${todo.completed} ? ' completed' : ''">
+        
+        <!-- Label con checkbox y contenido -->
+        <label class="todo-item">
+          <input type="checkbox"
+                 class="todo-checkbox"
+                 th:checked="${todo.completed}"
+                 th:attr="onchange=|toggleTodo(${todo.todoId}, this)|" />
           
-          <!-- Label con checkbox y contenido -->
-          <label class="todo-item">
-            <input type="checkbox"
-                   class="todo-checkbox"
-                   th:checked="${todo.completed}"
-                   th:attr="onchange=|toggleTodo(${todo.todoId}, this)|" />
-            
-            <div class="todo-content">
-              <span class="todo-name" th:text="${todo.name}"></span>
-              <span class="priority-badge" 
-      th:classappend="${todo.priority == 'Urgent and Important' ? 'priority-urgent-important' : 
-                       todo.priority == 'Urgent but not Important' ? 'priority-urgent-notimportant' :
-                       todo.priority == 'Not Urgent but Important' ? 'priority-noturgent-important' :
-                       'priority-noturgent-notimportant'}"
-      th:text="${todo.priority}"></span>
-            </div>
-          </label>
-        </li>
-      </ul>
-    </section>
+          <div class="todo-content">
+            <span class="todo-name" th:text="${todo.name}"></span>
+            <span class="priority-badge" 
+                  th:classappend="${todo.priority == 'Urgent and Important' ? 'priority-urgent-important' : 
+                                   todo.priority == 'Urgent but not Important' ? 'priority-urgent-notimportant' :
+                                   todo.priority == 'Not Urgent but Important' ? 'priority-noturgent-important' :
+                                   'priority-noturgent-notimportant'}"
+                  th:text="${todo.priority}"></span>
+          </div>
+        </label>
+      </li>
+    </ul>
   </div>
   
   <div th:if="${todos == null or todos.size() == 0}" class="empty-state">
-    <p>No tasks for today🌿</p>
+    <p>No tasks for today 🌿</p>
   </div>
 </div>
 
-                <!-- Sección de Hábitos -->
-                <div class="habits-summary">
-                    <p class="title">Your habits</p>
-                    <ul class="habit-list">
-                    <li th:each="habit : ${habits}">
-                        <div class="habit-item">
-                        <!-- Checkbox para marcar completado -->
-                        <input type="checkbox" 
-                        class="habit-checkbox"
-                        th:data-habit-id="${habit.habitId}"
-                        th:checked="${habit.completed}">
+
+<div class="habits-summary">
+  <p class="title">Your habits</p>
+  <ul class="habit-list">
+    <li th:each="habit : ${habits}" class="habit-item-wrapper">
+      <!-- Checkbox -->
+      <input type="checkbox" 
+             class="habit-checkbox"
+             th:data-habit-id="${habit.habitId}"
+             th:checked="${habit.completed}">
+      
+      <!-- Info del hábito (nombre + racha JUNTOS) -->
+      <div class="habit-info">
+        <span class="habit-title" th:text="${habit.title}">Título del hábito</span>
         
-                    <div class="habit-info">
-                    <span class="habit-title" th:text="${habit.title}">Título del hábito</span>
-                    </div>
-        
-                    <div class="habit-stats">
-                    <span class="habit-streak">
-                    🔥 <span th:text="${habit.habitHistory != null ? habit.habitHistory.currentStreak : 0}">0</span>
-                    </span>
-                    </div>
-                        </div>
-                    </li>
-                    
-                        </ul>
-                    </div>
-                    <div th:if="${habits == null or habits.size() == 0}">
-                        <p>No habits for today 🌸.Start today with a new one! 📝</p>
-                    </div>
-                </div>
-            </div>
+        <!-- Racha como badge (al lado, no abajo) -->
+        <span class="habit-streak-badge">
+          🔥 <span th:text="${habit.habitHistory != null ? habit.habitHistory.currentStreak : 0}">0</span>
+        </span>
+      </div>
+    </li>
+    
+    <li th:if="${#lists.isEmpty(habits)}" class="empty-state">
+      <p>No habits for today 🌸. Start today with a new one! 📝</p>
+    </li>
+  </ul>
+</div>
 
             <div id="todos-section" class="section"></div>
             <div id="habits-section" class="section"></div>
@@ -129,7 +120,8 @@
 </div>
 <div th:replace="fragments/completeHabit :: completeHabitModal"></div>
 
+    <script defer th:src="@{/js/home.js}"></script>
 </body>
-<script th:src="@{/js/todo.js}"></script>
+
 
 </html>

@@ -1,6 +1,8 @@
+// ===== ESPERAR A QUE TODO EL DOM CARGUE =====
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('🟢 Habits.js cargado');
+  console.log('🟢 Habits.js cargado y DOM listo');
   
+  // ===== CREAR HÁBITO =====
   const habitTitle = document.getElementById('habitTitle');
   const habitForm = document.getElementById('habitForm');
   const toggleHabitMoreBtn = document.getElementById('toggleHabitMoreBtn');
@@ -9,27 +11,50 @@ document.addEventListener('DOMContentLoaded', function() {
   const habitDesc = document.getElementById('habitDesc');
   const habitGoal = document.getElementById('habitGoal');
   const habitArea = document.getElementById('habitArea');
-  const habitCompleted = document.getElementById('habitCompleted');
 
   if (!habitTitle || !habitForm) {
-    console.error('❌ Elementos del formulario no encontrados');
+    console.error('❌ Elementos del formulario de hábito no encontrados');
     return;
   }
 
   console.log('✅ Formulario encontrado');
 
-  // ===== EXPANDIR/CONTRAER FORMULARIO =====
+  // ===== RESETEAR CHECKBOXES A MEDIANOCHE =====
+function resetCheckboxesAtMidnight() {
+  const lastResetDate = localStorage.getItem('lastResetDate');
+  const today = new Date().toISOString().split('T')[0]; // Formato: YYYY-MM-DD
+
+  if (lastResetDate !== today) {
+    console.log('🔄 Reseteando hábitos - nuevo día detectado');
+    
+    // Desmarcar todos los checkboxes
+    document.querySelectorAll('.habit-checkbox').forEach(checkbox => {
+      checkbox.checked = false;
+    });
+    
+    // Guardar que ya reseteamos hoy
+    localStorage.setItem('lastResetDate', today);
+    location.reload(); // Opcional: recargar página
+  }
+}
+
+// Llamar al cargar la página
+resetCheckboxesAtMidnight();
+
+// También verificar cada hora por si acaso
+setInterval(resetCheckboxesAtMidnight, 3600000); // Cada hora
+
+
+  // Toggle formulario
   toggleHabitMoreBtn.addEventListener('click', function() {
     console.log('📍 Toggle formulario');
     habitForm.classList.toggle('hidden');
-    
-    // Auto-focus en la descripción cuando se expande
     if (!habitForm.classList.contains('hidden')) {
       habitDesc.focus();
     }
   });
 
-  // ===== CANCELAR =====
+  // Cancelar
   cancelHabitBtn.addEventListener('click', function() {
     console.log('❌ Cancelar formulario');
     habitForm.classList.add('hidden');
@@ -38,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
     habitTitle.focus();
   });
 
-  // ===== CREAR HÁBITO =====
+  // Crear hábito
   habitForm.addEventListener('submit', function(e) {
     e.preventDefault();
     console.log('📝 Enviando formulario de hábito');
@@ -60,9 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    // Obtener userId
-    const userId = document.querySelector('body').getAttribute('data-user-id') || 
-                   document.querySelector('[name="userId"]')?.value;
+    const userId = document.querySelector('body').getAttribute('data-user-id');
 
     if (!userId) {
       console.error('❌ userId no encontrado');
@@ -95,7 +118,6 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('✅ Hábito creado:', data);
       alert('✅ ¡Hábito creado exitosamente!');
       
-      // Limpiar y contraer
       habitForm.reset();
       habitForm.classList.add('hidden');
       habitTitle.value = '';
@@ -108,119 +130,109 @@ document.addEventListener('DOMContentLoaded', function() {
       alert('Error al crear el hábito');
     });
   });
-});
 
+  // ===== CREAR ÁREA =====
+  const areaNameInput = document.getElementById('areaNameInput');
+  const createAreaBtn = document.getElementById('createAreaBtn');
+  const createAreaModal = document.getElementById('createAreaModal');
+  const modalAreaName = document.getElementById('modalAreaName');
+  const modalAreaDesc = document.getElementById('modalAreaDesc');
+  const saveAreaBtn = document.getElementById('saveAreaBtn');
+  const cancelAreaBtn = document.getElementById('cancelAreaBtn');
 
-// ===== CREAR ÁREA =====
-const areaNameInput = document.getElementById('areaNameInput');
-const createAreaBtn = document.getElementById('createAreaBtn');
-const createAreaModal = document.getElementById('createAreaModal');
-const modalAreaName = document.getElementById('modalAreaName');
-const modalAreaDesc = document.getElementById('modalAreaDesc');
-const saveAreaBtn = document.getElementById('saveAreaBtn');
-const cancelAreaBtn = document.getElementById('cancelAreaBtn');
+  if (createAreaBtn && createAreaModal) {
+    console.log('✅ Elementos de área encontrados');
 
-if (createAreaBtn && createAreaModal) {
-  console.log('✅ Elementos de área encontrados');
+    createAreaBtn.addEventListener('click', function() {
+      const areaName = areaNameInput.value.trim();
+      
+      console.log('📍 Click en crear área');
+      console.log('📋 Nombre ingresado:', areaName);
 
-  // Click en el botón "+" del sidebar
-  createAreaBtn.addEventListener('click', function() {
-    const areaName = areaNameInput.value.trim();
-    
-    console.log('📍 Click en crear área');
-    console.log('📋 Nombre ingresado:', areaName);
-
-    if (!areaName) {
-      alert('Por favor ingresa un nombre para el área');
-      areaNameInput.focus();
-      return;
-    }
-
-    // Prellenar el nombre en el modal
-    modalAreaName.value = areaName;
-    modalAreaDesc.value = '';
-    
-    // Abrir modal
-    createAreaModal.classList.remove('hidden');
-    modalAreaDesc.focus();
-  });
-
-  // Guardar área desde el modal
-  saveAreaBtn.addEventListener('click', function() {
-    const name = modalAreaName.value.trim();
-    const description = modalAreaDesc.value.trim();
-
-    if (!name) {
-      alert('El nombre del área es requerido');
-      modalAreaName.focus();
-      return;
-    }
-
-    // Obtener userId
-    const userId = document.querySelector('body').getAttribute('data-user-id');
-
-    if (!userId) {
-      console.error('❌ userId no encontrado');
-      alert('Error: usuario no identificado');
-      return;
-    }
-
-    const payload = {
-      name: name,
-      description: description,
-      users: {
-        userId: parseInt(userId)
-      }
-    };
-
-    console.log('📤 Enviando área:', payload);
-
-    fetch('/api/areas/createArea', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.error || typeof data === 'string') {
-        console.error('❌ Error:', data);
-        alert('❌ Error: ' + (data.error || data));
+      if (!areaName) {
+        alert('Por favor ingresa un nombre para el área');
+        areaNameInput.focus();
         return;
       }
-      console.log('✅ Área creada:', data);
-      alert('✅ ¡Área creada exitosamente!');
-      
-      // Cerrar modal y limpiar
-      createAreaModal.classList.add('hidden');
-      areaNameInput.value = '';
-      modalAreaName.value = '';
+
+      modalAreaName.value = areaName;
       modalAreaDesc.value = '';
       
-      setTimeout(() => location.reload(), 500);
-    })
-    .catch(err => {
-      console.error('❌ Error de red:', err);
-      alert('Error al crear el área');
+      createAreaModal.classList.remove('hidden');
+      modalAreaDesc.focus();
     });
-  });
 
-  // Cancelar
-  cancelAreaBtn.addEventListener('click', function() {
-    createAreaModal.classList.add('hidden');
-    modalAreaName.value = '';
-    modalAreaDesc.value = '';
-  });
+    saveAreaBtn.addEventListener('click', function() {
+      const name = modalAreaName.value.trim();
+      const description = modalAreaDesc.value.trim();
 
-  // Cerrar modal al hacer click fuera
-  createAreaModal.addEventListener('click', function(e) {
-    if (e.target === createAreaModal) {
+      if (!name) {
+        alert('El nombre del área es requerido');
+        modalAreaName.focus();
+        return;
+      }
+
+      const userId = document.querySelector('body').getAttribute('data-user-id');
+
+      if (!userId) {
+        console.error('❌ userId no encontrado');
+        alert('Error: usuario no identificado');
+        return;
+      }
+
+      const payload = {
+        name: name,
+        description: description,
+        users: {
+          userId: parseInt(userId)
+        }
+      };
+
+      console.log('📤 Enviando área:', payload);
+
+      fetch('/api/areas/createArea', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error || typeof data === 'string') {
+          console.error('❌ Error:', data);
+          alert('❌ Error: ' + (data.error || data));
+          return;
+        }
+        console.log('✅ Área creada:', data);
+        alert('✅ ¡Área creada exitosamente!');
+        
+        createAreaModal.classList.add('hidden');
+        areaNameInput.value = '';
+        modalAreaName.value = '';
+        modalAreaDesc.value = '';
+        
+        setTimeout(() => location.reload(), 500);
+      })
+      .catch(err => {
+        console.error('❌ Error de red:', err);
+        alert('Error al crear el área');
+      });
+    });
+
+    cancelAreaBtn.addEventListener('click', function() {
       createAreaModal.classList.add('hidden');
-    }
-  });
-}
+      modalAreaName.value = '';
+      modalAreaDesc.value = '';
+    });
 
-// ===== COMPLETAR HÁBITO =====
-document.addEventListener('DOMContentLoaded', function() {
+    createAreaModal.addEventListener('click', function(e) {
+      if (e.target === createAreaModal) {
+        createAreaModal.classList.add('hidden');
+      }
+    });
+  }
+
+  // ===== COMPLETAR HÁBITO =====
+  // ===== COMPLETAR HÁBITO =====
   const habitCheckboxes = document.querySelectorAll('.habit-checkbox');
   const completeHabitModal = document.getElementById('completeHabitModal');
   const modalHabitTitle = document.getElementById('modalHabitTitle');
@@ -230,98 +242,153 @@ document.addEventListener('DOMContentLoaded', function() {
 
   let currentHabitId = null;
   let currentHabitTitle = null;
+  let currentCheckbox = null;
 
-  // ✅ Escuchar cambios en checkboxes
+  if (!completeHabitModal) {
+    console.warn('⚠️ completeHabitModal no encontrado - esperando que cargue...');
+  }
+
   habitCheckboxes.forEach(checkbox => {
     checkbox.addEventListener('change', function() {
       currentHabitId = this.getAttribute('data-habit-id');
-      currentHabitTitle = this.closest('.habit-item')
-                            .querySelector('.habit-title').textContent;
+      currentCheckbox = this;
+      
+      const wrapper = this.closest('.habit-item-wrapper');
+      if (!wrapper) {
+        console.error('❌ No se encontró .habit-item-wrapper');
+        return;
+      }
+      
+      const titleEl = wrapper.querySelector('.habit-title');
+      if (!titleEl) {
+        console.error('❌ No se encontró .habit-title');
+        return;
+      }
+      
+      currentHabitTitle = titleEl.textContent;
 
       console.log('✅ Checkbox changed - HabitId:', currentHabitId, 'Checked:', this.checked);
 
       if (this.checked) {
-        // ✅ Si se MARCA → Abrir modal para agregar nota
+        // ✅ CHECKING - Open modal for note
+        if (!completeHabitModal || !modalHabitTitle || !habitNote) {
+          console.error('❌ Modal elements no encontrados');
+          alert('Error: Modal no cargó correctamente');
+          this.checked = false;
+          return;
+        }
+        
         modalHabitTitle.textContent = currentHabitTitle;
         habitNote.value = '';
         completeHabitModal.classList.remove('hidden');
         habitNote.focus();
       } else {
-        // ✅ Si se DESMARCA → Llamar endpoint uncomplete
-        fetch(`/api/habits/${currentHabitId}/uncomplete`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' }
-        })
-        .then(res => res.json())
-        .then(data => {
-          console.log('✅ Hábito desmarcado:', data);
-          console.log('📊 Nueva racha:', data.streak);
-          setTimeout(() => location.reload(), 500);
-        })
-        .catch(err => {
-          console.error('❌ Error:', err);
-          this.checked = true; // Revertir si hay error
-          alert('Error al desmarcar el hábito');
-        });
+        // ✅ UNCHECKING - Show confirmation
+        if (confirm('¿Estás seguro? Esto eliminará tu nota y decrementará la racha.')) {
+          fetch(`/api/habits/${currentHabitId}/uncomplete`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' }
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.error) {
+              console.error('❌ Error:', data.error);
+              alert('❌ ' + data.error);
+              this.checked = true;
+              return;
+            }
+            console.log('✅ Hábito desmarcado:', data);
+            console.log('📊 Nueva racha:', data.streak);
+            alert(`✅ Hábito desmarcado. Racha actual: ${data.streak}`);
+            setTimeout(() => location.reload(), 500);
+          })
+          .catch(err => {
+            console.error('❌ Error:', err);
+            this.checked = true;
+            alert('Error al desmarcar el hábito');
+          });
+        } else {
+          // User cancelled - revert checkbox
+          this.checked = true;
+        }
       }
     });
   });
 
-  // ✅ GUARDAR COMPLETACIÓN con nota
-  saveCompleteBtn.addEventListener('click', function() {
-    const note = habitNote.value.trim();
+  if (saveCompleteBtn) {
+    saveCompleteBtn.addEventListener('click', function() {
+      const note = habitNote.value.trim();
 
-    if (!note) {
-      alert('Por favor añade una nota');
-      habitNote.focus();
-      return;
-    }
-
-    const payload = { note: note };
-
-    fetch(`/api/habits/${currentHabitId}/complete`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.error) {
-        console.error('❌ Error:', data.error);
-        alert('❌ Error: ' + data.error);
+      if (!note) {
+        alert('Por favor añade una nota');
+        habitNote.focus();
         return;
       }
 
-      console.log('✅ Hábito completado:', data);
-      alert('✨ ¡Hábito completado! Racha: ' + data.streak);
+      const payload = { note: note };
 
-      completeHabitModal.classList.add('hidden');
-      setTimeout(() => location.reload(), 800);
-    })
-    .catch(err => {
-      console.error('❌ Error de red:', err);
-      alert('Error al completar el hábito');
+      fetch(`/api/habits/${currentHabitId}/complete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          console.error('❌ Error:', data.error);
+          
+          // ✅ NEW: Handle already completed
+          if (data.alreadyCompleted) {
+            alert('ℹ️ Este hábito ya fue completado hoy');
+            if (currentCheckbox) currentCheckbox.checked = true;
+          } else {
+            alert('❌ Error: ' + data.error);
+            if (currentCheckbox) currentCheckbox.checked = false;
+          }
+          
+          completeHabitModal.classList.add('hidden');
+          return;
+        }
+
+        console.log('✅ Hábito completado:', data);
+        alert('✨ ¡Hábito completado! Racha: ' + data.streak);
+
+        completeHabitModal.classList.add('hidden');
+        setTimeout(() => location.reload(), 800);
+      })
+      .catch(err => {
+        console.error('❌ Error de red:', err);
+        alert('Error al completar el hábito');
+        if (currentCheckbox) currentCheckbox.checked = false;
+      });
     });
-  });
+  }
 
-  // ✅ CANCELAR
-  cancelCompleteBtn.addEventListener('click', function() {
-    completeHabitModal.classList.add('hidden');
-    currentHabitId = null;
-    habitNote.value = '';
-    
-    // ✅ Desmarcar el checkbox también
-    const checkbox = document.querySelector(`[data-habit-id="${currentHabitId}"]`);
-    if (checkbox) checkbox.checked = false;
-  });
+  if (cancelCompleteBtn) {
+    cancelCompleteBtn.addEventListener('click', function() {
+      completeHabitModal.classList.add('hidden');
+      habitNote.value = '';
+      
+      // ✅ FIXED: Properly reset checkbox
+      if (currentCheckbox) {
+        currentCheckbox.checked = false;
+      }
+      
+      currentHabitId = null;
+      currentCheckbox = null;
+    });
+  }
 
-  // ✅ Cerrar modal al click fuera
-  completeHabitModal.addEventListener('click', function(e) {
-    if (e.target === completeHabitModal) {
-      this.classList.add('hidden');
-    }
-  });
+  if (completeHabitModal) {
+    completeHabitModal.addEventListener('click', function(e) {
+      if (e.target === completeHabitModal) {
+        this.classList.add('hidden');
+        
+        // ✅ FIXED: Reset checkbox when closing modal
+        if (currentCheckbox && !currentCheckbox.dataset.wasCompleted) {
+          currentCheckbox.checked = false;
+        }
+      }
+    });
+  }
 });
-
-
-

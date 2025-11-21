@@ -14,6 +14,9 @@ import com.padma.demo.services.HabitHistoryService;
 import com.padma.demo.services.HabitCompletionService;
 import java.time.LocalDate;
 import java.util.List;
+
+import javax.management.RuntimeErrorException;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -22,15 +25,25 @@ public class HabitService {
 
     private final HabitRepository habitRepository;
     private final UserRepository userRepository;
+    private final HabitHistoryRepository habitHistoryRepository; // ✅ ADDED THIS
     private final HabitHistoryService habitHistoryService;
     private final HabitCompletionService habitCompletionService;
 
-    public HabitService(HabitRepository habitRepository, UserRepository userRepository,
-            HabitHistoryService habitHistoryService, HabitCompletionService habitCompletionService) {
+    // ✅ UPDATED CONSTRUCTOR - Added habitHistoryRepository parameter
+    public HabitService(HabitRepository habitRepository,
+            UserRepository userRepository,
+            HabitHistoryRepository habitHistoryRepository, // ✅ ADDED THIS PARAMETER
+            HabitHistoryService habitHistoryService,
+            HabitCompletionService habitCompletionService) {
         this.habitRepository = habitRepository;
         this.userRepository = userRepository;
+        this.habitHistoryRepository = habitHistoryRepository; // ✅ ADDED THIS
         this.habitHistoryService = habitHistoryService;
         this.habitCompletionService = habitCompletionService;
+    }
+
+    public List<Habit> getHabitsByUserId(Long userId) {
+        return habitRepository.findAllByUsers_UserId(userId);
     }
 
     // Crear un hábito
@@ -69,43 +82,76 @@ public class HabitService {
         Habit habit = habitRepository.findById(habitId)
                 .orElseThrow(() -> new RuntimeException("Hábito no encontrado con ID: " + habitId));
 
-        if (note == null || note.isEmpty()) {
+        if (note == null || note.trim().isEmpty()) {
             throw new RuntimeException("Es obligatorio añadir una nota al completar el hábito.");
         }
 
+        // ✅ NEW: Check if already completed today
+        LocalDate today = LocalDate.now();
+        HabitHistory history = habitHistoryRepository
+                .findByHabit_HabitId(habitId)
+                .orElse(null);
+
+        if (history != null && history.getCompletionDates() != null
+                && history.getCompletionDates().contains(today)) {
+            throw new RuntimeException("Este hábito ya fue completado hoy");
+        }
+
         habit.setCompleted(true);
-        HabitHistory history = habitHistoryService.updateStreak(habit);
+        history = habitHistoryService.updateStreak(habit);
         habitCompletionService.createCompletion(history, note);
 
         return habitRepository.save(habit);
     }
 
-    // NUEVO MÉTODO para desmarcar hábito
-    @Transactional
+    // ✅ FIXED: Unmark with note deletion
     public Habit unmarkHabitAsCompleted(Long habitId) {
-        log.info("❌ Desmarcando hábito: {}", habitId);
-
         Habit habit = habitRepository.findById(habitId)
                 .orElseThrow(() -> new RuntimeException("Hábito no encontrado con ID: " + habitId));
 
-        // Desmarcar
-        habit.setCompleted(false);
+        LocalDate today = LocalDate.now();
 
-        // Actualizar streak (decrement logic)
+        // ✅ NEW: Verify it was completed today
+        HabitHistory history = habitHistoryRepository
+                .findByHabit_HabitId(habitId)
+                .orElseThrow(() -> new RuntimeException("HabitHistory no encontrado"));
+
+        if (history.getCompletionDates() == null
+                || !history.getCompletionDates().contains(today)) {
+            throw new RuntimeException("Este hábito no fue completado hoy");
+        }
+
+        // ✅ NEW: Delete today's completion note
+        habitCompletionService.deleteTodayCompletion(history.getHabitHistoryId());
+
+        // Update streak
         habitHistoryService.updateStreakOnUncompleted(habit);
 
+        habit.setCompleted(false);
         return habitRepository.save(habit);
     }
 
-    // Obtener todos los hábitos de un usuario
-    public List<Habit> getHabitsByUserId(Long userId) {
-        return habitRepository.findAllByUsers_UserId(userId);
+    // ✅ UPDATED: Also recalculates streaks on page load
+    public void resetDailyCompletionFlags(Long userId) {
+        List<Habit> habits = habitRepository.findAllByUsers_UserId(userId);
+        LocalDate today = LocalDate.now();
+
+        habits.forEach(habit -> {
+            HabitHistory history = habit.getHabitHistory();
+
+            // Only keep checked if completed TODAY
+            boolean completedToday = history != null
+                    && history.getCompletionDates() != null
+                    && history.getCompletionDates().contains(today);
+
+            if (!completedToday && habit.isCompleted()) {
+                habit.setCompleted(false);
+                habitRepository.save(habit);
+            }
+
+            // ✅ NEW: Recalculate streak on every page load
+            habitHistoryService.recalculateStreakOnPageLoad(habit);
+        });
     }
 
-    // Calcular progreso (% hacia goal)
-    public int calculateProgress(Habit habit) {
-        int streak = habit.getHabitHistory().getCurrentStreak();
-        int goal = habit.getGoal();
-        return (int) ((double) streak / goal * 100);
-    }
 }

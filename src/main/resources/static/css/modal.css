@@ -29,16 +29,19 @@
 }
 
 /* ===== CONTENIDO DEL MODAL ===== */
+/* ===== CONTENIDO DEL MODAL ===== */
 .modal-content {
   background: white;
   padding: 30px;
   border-radius: 12px;
   border: 1px solid #dcdcdc;
-  max-width: 450px;
+  max-width: 600px;  /* ← AUMENTADO a 600px */
   width: 90%;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   animation: modalSlideDown 0.3s ease-out;
 }
+
+
 
 @keyframes modalSlideDown {
   from {
@@ -196,6 +199,22 @@
 .modal-content > div[style*="display: flex"] .form-group {
   flex: 1;
 }
+
+/* ===== FILA MODAL (3 columnas) ===== */
+.modal-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  width: 100%;  
+}
+
+.modal-row .form-group {
+  flex: 1;
+  margin-bottom: 0;
+  min-width: 0;  
+}
+
+
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {

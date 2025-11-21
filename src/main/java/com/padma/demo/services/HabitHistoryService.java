@@ -6,6 +6,8 @@ import com.padma.demo.repository.HabitHistoryRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections; // ✅ ADDED THIS IMPORT
+
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,10 +22,10 @@ public class HabitHistoryService {
     }
 
     // ✅ Actualizar racha
+    // ✅ FIXED: Update streak with duplicate prevention
     public HabitHistory updateStreak(Habit habit) {
         log.info("📊 Actualizando racha para hábito: {}", habit.getTitle());
 
-        // Buscar o crear HabitHistory
         HabitHistory history = habitHistoryRepository
                 .findByHabit_HabitId(habit.getHabitId())
                 .orElseGet(() -> {
@@ -38,10 +40,10 @@ public class HabitHistoryService {
 
         LocalDate today = LocalDate.now();
 
-        // ✅ Si ya fue completado hoy, no incrementes de nuevo
+        // ✅ CRITICAL: Prevent duplicate completion
         if (history.getCompletionDates() != null && history.getCompletionDates().contains(today)) {
-            log.warn("⚠️ Hábito ya completado hoy");
-            return history;
+            log.warn("⚠️ Hábito ya completado hoy - no se incrementa racha");
+            throw new RuntimeException("Este hábito ya fue completado hoy");
         }
 
         LocalDate yesterday = today.minusDays(1);
@@ -72,7 +74,7 @@ public class HabitHistoryService {
         return habitHistoryRepository.save(history);
     }
 
-    // Actualizar racha cuando se DESCOMPLETA (uncheck)
+    // ✅ FIXED: Properly handle same-day uncheck
     public HabitHistory updateStreakOnUncompleted(Habit habit) {
         log.info("📊 Actualizando racha (DESCOMPLETADO) para hábito: {}", habit.getTitle());
 
@@ -82,24 +84,93 @@ public class HabitHistoryService {
 
         LocalDate today = LocalDate.now();
 
-        // ✅ Eliminar la fecha de hoy de completadas
+        // ✅ Remove today's date
         if (history.getCompletionDates() != null) {
-            history.getCompletionDates().remove(today);
+            boolean removed = history.getCompletionDates().remove(today);
+
+            if (!removed) {
+                log.warn("⚠️ La fecha de hoy no estaba en completadas");
+                return history;
+            }
+
             log.info("🗑️ Fecha de hoy eliminada de completadas");
 
-            // ✅ Recalcular la racha
+            // ✅ FIXED: Recalculate streak properly
             LocalDate yesterday = today.minusDays(1);
-            if (history.getCompletionDates().contains(yesterday)) {
-                // Si ayer sí fue completado, la racha sigue siendo válida (pero no incrementa
-                // hoy)
-                log.info("ℹ️ Racha se mantiene porque ayer fue completado");
-            } else {
-                // Si ayer NO fue completado, resetea la racha
+
+            if (history.getCompletionDates().isEmpty()) {
+                // No completions left
                 history.setCurrentStreak(0);
-                log.info("🔄 Racha reiniciada a 0 (no hay continuidad)");
+                log.info("🔄 Racha reiniciada a 0 (sin completados)");
+            } else if (history.getCompletionDates().contains(yesterday)) {
+                // Yesterday was completed, so streak continues from yesterday
+                history.setCurrentStreak(Math.max(0, history.getCurrentStreak() - 1));
+                log.info("📉 Racha decrementada a: {}", history.getCurrentStreak());
+            } else {
+                // No continuity - need to recalculate streak from scratch
+                int newStreak = calculateCurrentStreak(history.getCompletionDates());
+                history.setCurrentStreak(newStreak);
+                log.info("🔄 Racha recalculada: {}", newStreak);
             }
         }
 
         return habitHistoryRepository.save(history);
+    }
+
+    // ✅ NEW: Public method to recalculate and save streak on page load
+    public HabitHistory recalculateStreakOnPageLoad(Habit habit) {
+        HabitHistory history = habitHistoryRepository
+                .findByHabit_HabitId(habit.getHabitId())
+                .orElse(null);
+
+        if (history == null) {
+            return null;
+        }
+
+        int correctStreak = calculateCurrentStreak(history.getCompletionDates());
+
+        // Only update if streak is different
+        if (history.getCurrentStreak() != correctStreak) {
+            log.info("🔄 Recalculando racha para hábito {}: {} → {}",
+                    habit.getTitle(), history.getCurrentStreak(), correctStreak);
+            history.setCurrentStreak(correctStreak);
+            return habitHistoryRepository.save(history);
+        }
+
+        return history;
+    }
+
+    // ✅ NEW: Helper method to recalculate streak from completion dates
+    private int calculateCurrentStreak(List<LocalDate> completionDates) {
+        if (completionDates == null || completionDates.isEmpty()) {
+            return 0;
+        }
+
+        // Sort dates descending
+        List<LocalDate> sorted = new ArrayList<>(completionDates);
+        sorted.sort(Collections.reverseOrder());
+
+        LocalDate mostRecent = sorted.get(0);
+        LocalDate today = LocalDate.now();
+
+        // If most recent is not today or yesterday, streak is broken
+        if (mostRecent.isBefore(today.minusDays(1))) {
+            return 0;
+        }
+
+        // Count consecutive days
+        int streak = 0;
+        LocalDate expectedDate = today.minusDays(1); // Start from yesterday
+
+        for (LocalDate date : sorted) {
+            if (date.equals(expectedDate)) {
+                streak++;
+                expectedDate = expectedDate.minusDays(1);
+            } else if (date.isBefore(expectedDate)) {
+                break;
+            }
+        }
+
+        return streak;
     }
 }

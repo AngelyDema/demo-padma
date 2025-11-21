@@ -1,0 +1,79 @@
+:root {
+  --color-checkbox: #c25b6c;
+}
+
+/* ===== LISTA DE HÁBITOS ===== */
+.habit-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Contenedor del item */
+.habit-item-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: white;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+
+.habit-item-wrapper:hover {
+  background: #f9f9f9;
+  border-color: #f7b1c3;
+  box-shadow: 0 2px 8px rgba(247, 177, 195, 0.2);
+}
+
+/* Checkbox del hábito */
+.habit-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-checkbox);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Info: título + racha juntos */
+.habit-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+/* Título del hábito */
+.habit-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #414040;
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* ===== RACHA COMO BADGE ===== */
+.habit-streak-badge {
+  display: inline-block;
+  background: #e9ae3f;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.habit-item-wrapper:hover .habit-streak-badge {
+  background: #f7b1c3;
+  box-shadow: 0 2px 6px rgba(247, 177, 195, 0.3);
+}
+
+/* Si el hábito está completado */
+.habit-item-wrapper.completed .habit-title {
+  text-decoration: line-through;
+  color: #9aa0a6;
+}

@@ -1,22 +1,19 @@
+// ===== FILTER BY DATE =====
 function filterByDate(filter) {
-    if (filter === 'today') {
-        window.location.href = '/todos/today';
-    } else if (filter === 'week') {
-        window.location.href = '/todos/week';
-    } else if (filter === 'all') {
-        window.location.href = '/todos/all';
-    }
-
+  if (filter === 'today') {
+    window.location.href = '/todos/today';
+  } else if (filter === 'week') {
+    window.location.href = '/todos/week';
+  } else if (filter === 'all') {
+    window.location.href = '/todos/all';
+  }
 }
 
-    //marcar hecho 
-
+// ===== TOGGLE TODO =====
 async function toggleTodo(todoId, checkboxElem) {
-  // Optimista: aplicamos cambio visual inmediatamente
   const li = checkboxElem.closest('li');
   const isChecked = checkboxElem.checked;
 
-  // aplicar clase visual mientras esperamos respuesta
   if (isChecked) {
     li.classList.add('completed');
   } else {
@@ -30,32 +27,34 @@ async function toggleTodo(todoId, checkboxElem) {
     });
 
     if (!resp.ok) {
-      // revertir UI si hubo error
       checkboxElem.checked = !isChecked;
       if (!isChecked) li.classList.add('completed');
       else li.classList.remove('completed');
-
       console.error('Error al actualizar el todo:', resp.status);
       alert('No se pudo actualizar la tarea. Intenta de nuevo.');
-    } else {
-      // ok — si quieres, puedes leer body o mostrar toast
     }
   } catch (err) {
-    // error de red — revertir cambios visuales
     checkboxElem.checked = !isChecked;
     if (!isChecked) li.classList.add('completed');
     else li.classList.remove('completed');
-
     console.error(err);
     alert('Error de red. Revisa tu conexión.');
   }
 }
 
-// ===== ESPERAR A QUE EL DOM CARGUE =====
+// ===== SINGLE DOMContentLoaded =====
 document.addEventListener('DOMContentLoaded', function() {
   console.log('🟢 DOM Cargado - inicializando todo.js');
 
-  // ===== OBTENER ELEMENTOS =====
+  // ===== CREAR TAREA =====
+  initCreateTodo();
+  
+  // ===== MENÚ DE TAREAS (EDIT/DELETE) =====
+  initTodoMenu();
+});
+
+// ===== CREAR TAREA =====
+function initCreateTodo() {
   const taskNameInput = document.getElementById('taskName');
   const taskDateInput = document.getElementById('taskDate');
   const taskDescInput = document.getElementById('taskDesc');
@@ -66,113 +65,80 @@ document.addEventListener('DOMContentLoaded', function() {
   const createBtn = document.getElementById('createBtn');
   const cancelBtn = document.getElementById('cancelBtn');
 
-  console.log('📋 Elementos encontrados:', {
-    taskName: taskNameInput ? '✅' : '❌',
-    taskDate: taskDateInput ? '✅' : '❌',
-    createBtn: createBtn ? '✅' : '❌'
-  });
-
-  // Validar que todos los elementos existan
-  if (!taskNameInput || !taskDateInput || !createBtn) {
-    console.error('❌ Faltan elementos en el HTML');
+  // ✅ Check if elements exist before adding listeners
+  if (!taskNameInput || !createBtn) {
+    console.warn('⚠️ Elementos de crear tarea no encontrados - saltando...');
     return;
   }
 
-  // ===== EVENT LISTENERS =====
+  console.log('✅ Elementos de crear tarea encontrados');
 
   // Toggle detalles
-  toggleMoreBtn.addEventListener('click', function() {
-    console.log('▶️ Toggle More clicked');
-    moreDetails.classList.toggle('hidden');
-    toggleMoreBtn.textContent = moreDetails.classList.contains('hidden') ? '⋮' : '✕';
-  });
+  if (toggleMoreBtn && moreDetails) {
+    toggleMoreBtn.addEventListener('click', function() {
+      moreDetails.classList.toggle('hidden');
+      toggleMoreBtn.textContent = moreDetails.classList.contains('hidden') ? '⋮' : '✕';
+    });
+  }
 
   // Cancelar
-  cancelBtn.addEventListener('click', function() {
-    console.log('🔄 Cancelar clicked');
-    resetForm();
-  });
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', function() {
+      resetForm();
+    });
+  }
 
   // Crear tarea
   createBtn.addEventListener('click', function() {
-    console.log('🚀 Crear clicked');
     createTodo();
   });
 
-  // ===== FUNCIONES =====
-
   function resetForm() {
-    console.log('🔄 Reseteando formulario...');
     taskNameInput.value = '';
-    taskDateInput.value = new Date().toISOString().split('T')[0];
-    taskDescInput.value = '';
-    taskListSelect.value = '';
-    taskPrioritySelect.value = 'Not Urgent but Important';
-    moreDetails.classList.add('hidden');
-    toggleMoreBtn.textContent = '⋮';
+    if (taskDateInput) taskDateInput.value = new Date().toISOString().split('T')[0];
+    if (taskDescInput) taskDescInput.value = '';
+    if (taskListSelect) taskListSelect.value = '';
+    if (taskPrioritySelect) taskPrioritySelect.value = 'Not Urgent but Important';
+    if (moreDetails) moreDetails.classList.add('hidden');
+    if (toggleMoreBtn) toggleMoreBtn.textContent = '⋮';
     taskNameInput.focus();
   }
 
   function createTodo() {
-    console.log('========== CREAR TAREA ==========');
-
-    // Validar nombre
     if (!taskNameInput.value.trim()) {
-      console.warn('⚠️ Nombre vacío');
       alert('Por favor ingresa un nombre para la tarea');
       return;
     }
 
-    // Obtener userId
     const userId = document.body.getAttribute('data-user-id');
-    console.log('🔍 userId del body:', userId);
-
     if (!userId) {
-      console.error('❌ No hay userId en el body');
-      console.log('📋 Body attributes:', {
-        'data-user-id': document.body.getAttribute('data-user-id')
-      });
       alert('Error: Usuario no autenticado. Recarga la página.');
       return;
     }
 
-    // Preparar payload
     const payload = {
       name: taskNameInput.value.trim(),
-      description: taskDescInput.value.trim(),
-      dueDate: taskDateInput.value,
-      priority: taskPrioritySelect.value,
+      description: taskDescInput ? taskDescInput.value.trim() : '',
+      dueDate: taskDateInput ? taskDateInput.value : new Date().toISOString().split('T')[0],
+      priority: taskPrioritySelect ? taskPrioritySelect.value : 'Not Urgent but Important',
       users: { userId: parseInt(userId) },
-      listTodos: taskListSelect.value ? { listTodoId: parseInt(taskListSelect.value) } : null
+      listTodos: (taskListSelect && taskListSelect.value) ? { listTodoId: parseInt(taskListSelect.value) } : null
     };
 
     console.log('📦 Payload:', payload);
 
-    // POST request
-    console.log('📤 Enviando POST a /api/todos/create...');
-    
     fetch('/api/todos/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     })
-    .then(res => {
-      console.log('📨 Response status:', res.status);
-      return res.json();
-    })
+    .then(res => res.json())
     .then(data => {
-      console.log('✅ Response data:', data);
-      
       if (data.todoId) {
-        console.log('✅✅ Tarea creada con ID:', data.todoId);
         alert('✅ Tarea creada exitosamente');
         resetForm();
-        setTimeout(() => {
-          console.log('🔄 Recargando página...');
-          location.reload();
-        }, 500);
+        setTimeout(() => location.reload(), 500);
       } else {
-        console.error('❌ Error en respuesta:', data);
         alert('❌ Error: ' + (data.error || 'Error desconocido'));
       }
     })
@@ -181,165 +147,224 @@ document.addEventListener('DOMContentLoaded', function() {
       alert('❌ Error creando tarea: ' + err.message);
     });
   }
+}
 
-});
-
-
-
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('🟢 DOM Cargado - inicializando menú de tareas');
-  
-  // ===== VARIABLES ===== 
-  const editModal = document.getElementById('editModal');
+// ===== MENÚ DE TAREAS =====
+function initTodoMenu() {
+  const editModal = document.getElementById('editTodo');
   const cancelEditBtn = document.getElementById('cancelEditBtn');
   const saveEditBtn = document.getElementById('saveEditBtn');
   let currentEditTodoId = null;
 
-  // ===== FUNCIÓN PARA AGREGAR EVENTOS A BOTONES =====
-  function attachTodoEvents() {
+  // ===== ATTACH EVENTS TO TODO BUTTONS =====
+  attachTodoMenuEvents();
+
+  // ===== MODAL EVENTS (only if modal exists) =====
+  if (editModal && cancelEditBtn && saveEditBtn) {
+    console.log('✅ Modal de edición encontrado');
+
+    // Save changes
+    saveEditBtn.addEventListener('click', function() {
+      console.log('💾 Guardando cambios para todoId:', currentEditTodoId);
+
+      const editTaskName = document.getElementById('editTaskName');
+      const editTaskDesc = document.getElementById('editTaskDesc');
+      const editTaskDate = document.getElementById('editTaskDate');
+      const editTaskPriority = document.getElementById('editTaskPriority');
+      const editTaskList = document.getElementById('editTaskList');
+
+      const name = editTaskName ? editTaskName.value.trim() : '';
+      const desc = editTaskDesc ? editTaskDesc.value.trim() : '';
+      const date = editTaskDate ? editTaskDate.value : '';
+      const priority = editTaskPriority ? editTaskPriority.value : '';
+      const listValue = editTaskList ? editTaskList.value : '';
+
+      if (!name) {
+        alert('El nombre es requerido');
+        return;
+      }
+
+      const payload = {
+        name: name,
+        description: desc,
+        dueDate: date,
+        priority: priority,
+        listTodos: listValue ? { listTodoId: parseInt(listValue) } : null
+      };
+
+      fetch(`/api/todos/id/${currentEditTodoId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log('✅ Tarea actualizada:', data);
+        alert('✅ Tarea actualizada exitosamente');
+        editModal.classList.add('hidden');
+        setTimeout(() => location.reload(), 500);
+      })
+      .catch(err => {
+        console.error('❌ Error:', err);
+        alert('Error al actualizar la tarea');
+      });
+    });
+
+    // Cancel edit
+    cancelEditBtn.addEventListener('click', function() {
+      editModal.classList.add('hidden');
+      currentEditTodoId = null;
+    });
+
+    // Close modal on background click
+    editModal.addEventListener('click', function(e) {
+      if (e.target === editModal) {
+        editModal.classList.add('hidden');
+      }
+    });
+  } else {
+    console.warn('⚠️ Modal de edición no encontrado - funcionalidad de edición deshabilitada');
+  }
+
+  // ===== ATTACH TODO MENU EVENTS =====
+  function attachTodoMenuEvents() {
     console.log('🔧 Agregando eventos a los botones de tareas...');
-    
-    // ===== MENÚ DE TAREAS =====
+
+    // Menu buttons (⋮)
+    document.querySelectorAll('.todo-menu-btn').forEach(btn => {
+      // ✅ Remove existing listeners to prevent duplicates
+      btn.replaceWith(btn.cloneNode(true));
+    });
+
+    // Re-select after clone
     document.querySelectorAll('.todo-menu-btn').forEach(btn => {
       btn.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        console.log('📍 Botón ⋮ clickeado');
-        
+
         const todoId = this.getAttribute('data-todo-id');
-        console.log('📝 TodoId:', todoId);
         const menu = document.getElementById(`menu-${todoId}`);
-        
+
+        console.log('🔽 Click en ⋮ - TodoId:', todoId);
+
         if (!menu) {
           console.error('❌ No se encontró menu-' + todoId);
           return;
         }
 
-        // Cerrar otros menús
+        // Close other menus
         document.querySelectorAll('.todo-menu').forEach(m => {
           if (m.id !== `menu-${todoId}`) {
             m.classList.add('hidden');
           }
         });
-        
-        console.log('✅ Menu toggled. Hidden:', menu.classList.contains('hidden'));
+
         menu.classList.toggle('hidden');
       });
     });
 
-    // ===== BOTÓN EDITAR =====
+    // Edit buttons
     document.querySelectorAll('.edit-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
+      btn.replaceWith(btn.cloneNode(true));
+    });
+
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
         const todoId = this.getAttribute('data-todo-id');
         console.log('✏️ Editar clickeado - TodoId:', todoId);
+
         openEditModal(todoId);
-        
-        // Cerrar menú
+
+        // Close menu
         const menu = document.getElementById(`menu-${todoId}`);
         if (menu) menu.classList.add('hidden');
       });
     });
 
-    // ===== BOTÓN ELIMINAR =====
+    // Delete buttons
     document.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
+      btn.replaceWith(btn.cloneNode(true));
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
         const todoId = this.getAttribute('data-todo-id');
         console.log('🗑️ Eliminar clickeado - TodoId:', todoId);
-        
+
         if (confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
           deleteTodo(todoId);
         }
-        
-        // Cerrar menú
+
+        // Close menu
         const menu = document.getElementById(`menu-${todoId}`);
         if (menu) menu.classList.add('hidden');
       });
     });
 
-    console.log('✅ Eventos agregados');
+    console.log('✅ Eventos de menú agregados');
   }
 
-  // ===== ABRIR MODAL DE EDICIÓN =====
+  // ===== OPEN EDIT MODAL =====
   function openEditModal(todoId) {
-    console.log('📝 Abriendo modal para editar todoId:', todoId);
-    
-    currentEditTodoId = todoId;
-    
-    // Obtener datos de la tarea del DOM
-    const todoItem = document.querySelector(`[data-todo-id="${todoId}"]`).closest('.todo-item-wrapper');
-    if (!todoItem) {
-      console.error('❌ No se encontró todoItem');
+    if (!editModal) {
+      console.error('❌ Modal de edición no disponible');
+      alert('Error: Modal de edición no cargado. Verifica que el fragmento esté incluido.');
       return;
     }
 
-    const name = todoItem.querySelector('.todo-name').textContent;
-    const date = todoItem.querySelector('.todo-date').textContent;
-    
-    console.log('📋 Datos encontrados - Name:', name, 'Date:', date);
+    currentEditTodoId = todoId;
 
-    // Llenar el formulario
-    document.getElementById('editTaskName').value = name;
-    document.getElementById('editTaskDesc').value = '';
-    
-    // Convertir formato de fecha "Nov 16" a "2025-11-16"
-    const today = new Date();
-    const dateObj = new Date(today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + date.split(' ')[1]);
-    document.getElementById('editTaskDate').value = dateObj.toISOString().split('T')[0];
-    
+    // Find todo item
+    const todoItem = document.querySelector(`.todo-item-wrapper:has([data-todo-id="${todoId}"])`) ||
+                     document.querySelector(`[data-todo-id="${todoId}"]`)?.closest('.todo-item-wrapper');
+
+    if (!todoItem) {
+      console.error('❌ No se encontró el todo item');
+      return;
+    }
+
+    const nameEl = todoItem.querySelector('.todo-name');
+    const dateEl = todoItem.querySelector('.todo-date');
+
+    const name = nameEl ? nameEl.textContent : '';
+    const dateText = dateEl ? dateEl.textContent : '';
+
+    console.log('📋 Datos encontrados - Name:', name, 'Date:', dateText);
+
+    // Fill form
+    const editTaskName = document.getElementById('editTaskName');
+    const editTaskDesc = document.getElementById('editTaskDesc');
+    const editTaskDate = document.getElementById('editTaskDate');
+
+    if (editTaskName) editTaskName.value = name;
+    if (editTaskDesc) editTaskDesc.value = '';
+
+    // Convert date format "Nov 16" to "2025-11-16"
+    if (editTaskDate && dateText) {
+      try {
+        const months = { 'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06',
+                        'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12' };
+        const parts = dateText.split(' ');
+        const month = months[parts[0]] || '01';
+        const day = parts[1] ? parts[1].padStart(2, '0') : '01';
+        const year = new Date().getFullYear();
+        editTaskDate.value = `${year}-${month}-${day}`;
+      } catch (e) {
+        editTaskDate.value = new Date().toISOString().split('T')[0];
+      }
+    }
+
     editModal.classList.remove('hidden');
     console.log('✅ Modal abierto');
   }
 
-  // ===== GUARDAR CAMBIOS =====
-  saveEditBtn.addEventListener('click', function() {
-    console.log('💾 Guardando cambios para todoId:', currentEditTodoId);
-    
-    const name = document.getElementById('editTaskName').value.trim();
-    const desc = document.getElementById('editTaskDesc').value.trim();
-    const date = document.getElementById('editTaskDate').value;
-    const priority = document.getElementById('editTaskPriority').value;
-    const listValue = document.getElementById('editTaskList').value;
-    
-    if (!name) {
-      alert('El nombre es requerido');
-      return;
-    }
-
-    const payload = {
-      name: name,
-      description: desc,
-      dueDate: date,
-      priority: priority,
-      listTodos: listValue ? { listTodoId: parseInt(listValue) } : null
-    };
-
-    console.log('📤 Enviando payload:', payload);
-
-    fetch(`/api/todos/id/${currentEditTodoId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(res => res.json())
-    .then(data => {
-      console.log('✅ Tarea actualizada:', data);
-      alert('✅ Tarea actualizada exitosamente');
-      editModal.classList.add('hidden');
-      setTimeout(() => location.reload(), 500);
-    })
-    .catch(err => {
-      console.error('❌ Error:', err);
-      alert('Error al actualizar la tarea');
-    });
-  });
-
-  // ===== CANCELAR EDICIÓN =====
-  cancelEditBtn.addEventListener('click', function() {
-    editModal.classList.add('hidden');
-    currentEditTodoId = null;
-  });
-
-  // ===== ELIMINAR TAREA =====
+  // ===== DELETE TODO =====
   function deleteTodo(todoId) {
     console.log('🗑️ Eliminando todoId:', todoId);
 
@@ -358,77 +383,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // ===== CERRAR MENÚS AL HACER CLICK FUERA =====
+  // ===== CLOSE MENUS ON OUTSIDE CLICK =====
   document.addEventListener('click', function(e) {
-    if (!e.target.classList.contains('todo-menu-btn')) {
+    if (!e.target.classList.contains('todo-menu-btn') && 
+        !e.target.closest('.todo-menu')) {
       document.querySelectorAll('.todo-menu').forEach(m => m.classList.add('hidden'));
     }
   });
-
-  // ===== EJECUTAR INICIAL Y DESPUÉS DE CAMBIOS =====
-  attachTodoEvents();
-  
-  // Opcional: si las tareas se cargan dinámicamente, recargar eventos cada 500ms
-  // setInterval(attachTodoEvents, 500);
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('🟢 Inicializando menú de listas');
-  
-  const listMenuBtns = document.querySelectorAll('.list-menu-btn');
-  
-  listMenuBtns.forEach(btn => {
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      const listId = this.getAttribute('data-list-id');
-      const menu = document.getElementById(`listmenu-${listId}`);
-      
-      console.log('📍 Click en botón ⋮ - ListId:', listId);
-      
-      // Cerrar otros menús
-      document.querySelectorAll('.list-item-menu').forEach(m => {
-        if (m.id !== `listmenu-${listId}`) {
-          m.classList.add('hidden');
-        }
-      });
-      
-      menu.classList.toggle('hidden');
-    });
-  });
-
-  // Editar lista
-  document.querySelectorAll('.edit-list-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const listId = this.getAttribute('data-list-id');
-      console.log('✏️ Editar lista:', listId);
-      // Aquí ya está el código en tu JavaScript anterior
-      openEditListModal(listId);
-      document.getElementById(`listmenu-${listId}`).classList.add('hidden');
-    });
-  });
-
-  // Eliminar lista
-  document.querySelectorAll('.delete-list-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const listId = this.getAttribute('data-list-id');
-      console.log('🗑️ Eliminar lista:', listId);
-      if (confirm('¿Estás seguro?')) {
-        deleteList(listId);
-      }
-      document.getElementById(`listmenu-${listId}`).classList.add('hidden');
-    });
-  });
-
-  // Cerrar menús al hacer click fuera
-  document.addEventListener('click', function(e) {
-    if (!e.target.classList.contains('list-menu-btn')) {
-      document.querySelectorAll('.list-item-menu').forEach(m => {
-        m.classList.add('hidden');
-      });
-    }
-  });
-});
-
-
+}

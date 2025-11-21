@@ -129,41 +129,6 @@ body {
   background-color: var(--color-primary-hover);
 }
 
-/* Lista de hábitos */
-.habit-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.habit-list li {
-  background-color: var(--color-card, #f0f0f0);
-  border-radius: 12px;
-  padding: 15px 20px;
-  box-shadow: var(--color-shadow);
-  margin-bottom: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.habit-title {
-  font-size: 1.1rem;
-  color: var(--color-text-dark);
-  margin: 0;
-}
-
-.habit-streak {
-  font-weight: 600;
-  color: var(--color-accent);
-  font-size: 0.9rem;
-}
-
-.habit-desc {
-  color: var(--color-text-dark);
-  font-size: 0.9rem;
-  margin-top: 5px;
-}
 
 /* Responsive behavior */
 @media (max-width: 768px) {

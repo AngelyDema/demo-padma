@@ -4,14 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <title>Padma | To-dos</title>
-  <link rel="stylesheet" th:href="@{/css/home.css}">
+  
+  <link rel="stylesheet" th:href="@{/css/layout.css}">
+
+  
+  <link rel="stylesheet" th:href="@{/css/modal.css}">
   <link rel="stylesheet" th:href="@{/css/todo.css}">
-    <link rel="stylesheet" th:href="@{/css/todos.css}">
-
-  <script th:src="@{/js/todo.js}"></script>
-  <script th:src="@{/js/list.js}"></script>
-  <link rel="stylesheet" th:href="@{/css/syles.css}">
-
+  <link rel="stylesheet" th:href="@{/css/todos.css}">
+  
 </head>
 
 <body th:attr="data-user-id=${userId}">
@@ -60,8 +60,8 @@
     
     <!-- Menú desplegable para cada lista -->
     <div class="list-item-menu hidden" th:id="'listmenu-' + ${list.listTodoId}">
-      <button class="menu-item edit-list-btn" th:data-list-id="${list.listTodoId}">✏️ Editar</button>
-      <button class="menu-item delete-list-btn" th:data-list-id="${list.listTodoId}">🗑️ Eliminar</button>
+      <button class="menu-item edit-list-btn" th:data-list-id="${list.listTodoId}">Editar</button>
+      <button class="menu-item delete-list-btn" th:data-list-id="${list.listTodoId}">Eliminar</button>
     </div>
   </li>
 
@@ -165,58 +165,12 @@
     </li>
   </ul>
 </section>
-
-<!-- MODAL EDITAR TAREA-->
-<div id="editModal" class="modal hidden">
-  <div class="modal-content">
-    <h2>Edit Task</h2>
-    
-    <div class="form-group">
-      <label for="editTaskName">Name</label>
-      <input type="text" id="editTaskName" maxlength="100">
-    </div>
-
-    <div class="form-group">
-      <label for="editTaskDesc">Description</label>
-      <textarea id="editTaskDesc"></textarea>
-    </div>
-
-    <div style="display: flex; gap: 15px;">
-      <div class="form-group" style="flex: 1;">
-        <label for="editTaskDate">Date</label>
-        <input type="date" id="editTaskDate">
-      </div>
-      
-
-      <div class="form-group" style="flex: 1;">
-        <label for="editTaskPriority">Priority</label>
-        <select id="taskPriority" class="priority-select">
-  <option value="Not Urgent but Important" data-color="#FFC107">Not Urgent but Important</option>
-  <option value="Urgent and Important" data-color="#FF6B6B">Urgent and Important</option>
-  <option value="Urgent but not Important" data-color="#FF9500">Urgent but not Important</option>
-  <option value="Not Urgent and Not Important" data-color="#90EE90">Not Urgent and Not Important</option>
-</select>
-      </div>
-
-
-<div class="form-group"  style="flex: 1;">
-  <label for="editTaskList">List</label>
-  <select id="editTaskList">
-    <option value="">Without list</option>
-    <option th:each="list : ${lists}" 
-            th:value="${list.listTodoId}" 
-            th:text="${list.name}"></option>
-  </select>
-</div>
-
-    <div class="modal-buttons">
-      <button id="cancelEditBtn" class="btn-cancel">Cancel</button>
-      <button id="saveEditBtn" class="btn-create">Save changes</button>
-    </div>
-  </div>
-</div>
       
     </main>
   </div>
+  <div th:replace="fragments/editTodo :: editTodo"></div>
+    <!-- JS -->
+  <script defer th:src="@{/js/todo.js}"></script>
+  <script defer th:src="@{/js/list.js}"></script>
 </body>
 </html>

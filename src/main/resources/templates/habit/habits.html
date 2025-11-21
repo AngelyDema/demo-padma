@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>Padma | Hábitos</title>
+  
+  <link rel="stylesheet" th:href="@{/css/layout.css}">
   <link rel="stylesheet" th:href="@{/css/habit.css}">
   <link rel="stylesheet" th:href="@{/css/modal.css}">
-  <link rel="stylesheet" th:href="@{/css/home.css}">
+ <link rel="stylesheet" th:href="@{/css/habits.css}">
 
-
-  <script defer th:src="@{/js/habit.js}"></script>
 </head>
 
 <body th:attr="data-user-id=${user.userId}">
@@ -121,36 +121,37 @@
 
 
         <!-- Lista de hábitos -->  
+<!-- Lista de hábitos en habits.html -->
 <div class="card">
   <h2>Tus hábitos</h2>
   <ul class="habit-list">
-    <li th:each="habit : ${habits}">
-      <div class="habit-item">
-        <!-- Checkbox para marcar completado -->
-        <input type="checkbox" 
-               class="habit-checkbox"
-               th:data-habit-id="${habit.habitId}"
-               th:checked="${habit.completed}">
+    <li th:each="habit : ${habits}" 
+        class="habit-item-wrapper"
+        th:classappend="${habit.completed} ? ' completed' : ''">
+      
+      <!-- Checkbox -->
+      <input type="checkbox" 
+             class="habit-checkbox"
+             th:data-habit-id="${habit.habitId}"
+             th:checked="${habit.completed}">
+      
+      <!-- Info del hábito (nombre + racha JUNTOS) -->
+      <div class="habit-info">
+        <span class="habit-title" th:text="${habit.title}">Habit title</span>
         
-        <div class="habit-info">
-          <span class="habit-title" th:text="${habit.title}">Título del hábito</span>
-          <p class="habit-desc" th:text="${habit.description}">Descripción...</p>
-        </div>
-        
-        <div class="habit-stats">
-          <span class="habit-streak">
-            🔥 <span th:text="${habit.habitHistory != null ? habit.habitHistory.currentStreak : 0}">0</span>
-          </span>
-          <span class="habit-goal" th:text="'/ ' + ${habit.goal}"></span>
-        </div>
+        <!-- Racha como badge -->
+        <span class="habit-streak-badge">
+          🔥 <span th:text="${habit.habitHistory != null ? habit.habitHistory.currentStreak : 0}">0</span>
+        </span>
       </div>
     </li>
     
-    <li th:if="${#lists.isEmpty(habits)}">
-      <p class="empty-msg">No has creado hábitos aún 🌷</p>
+    <li th:if="${#lists.isEmpty(habits)}" class="empty-state">
+      <p>You haven't create habits yet 🌷</p>
     </li>
   </ul>
 </div>
+
 
 <div th:replace="fragments/completeHabit :: completeHabitModal"></div>
 
@@ -158,5 +159,6 @@
       </section>
     </main>
   </div>
+  <script defer th:src="@{/js/habit.js}"></script>
 </body>
 </html>
