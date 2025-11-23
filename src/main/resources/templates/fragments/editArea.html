@@ -1,21 +1,21 @@
 <!-- ✅ MODAL EDITAR ÁREA -->
       <div th:fragment= "editAreaModal" id="editAreaModal" class="modal hidden">
         <div class="modal-content">
-          <h2>Editar Área</h2>
+          <h2>Edit Area</h2>
           
           <div class="form-group">
-            <label for="editAreaName">Nombre</label>
+            <label for="editAreaName">Name</label>
             <input type="text" id="editAreaName" maxlength="50" required>
           </div>
 
           <div class="form-group">
-            <label for="editAreaDesc">Descripción</label>
+            <label for="editAreaDesc">Description</label>
             <textarea id="editAreaDesc" maxlength="500" placeholder="Descripción (opcional)"></textarea>
           </div>
 
           <div class="modal-buttons">
-            <button id="cancelEditAreaBtn" class="btn-cancel">Cancelar</button>
-            <button id="saveEditAreaBtn" class="btn-primary">Guardar Cambios</button>
+            <button id="cancelEditAreaBtn" class="btn-cancel">Cancel</button>
+            <button id="saveEditAreaBtn" class="btn-primary">Save changes</button>
           </div>
         </div>
       </div>

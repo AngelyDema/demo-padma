@@ -3,34 +3,34 @@
 <!-- ✅ MODAL EDITAR HÁBITO -->
 <div th:fragment="editHabitModal" id="editHabitModal" class="modal hidden">
   <div class="modal-content">
-    <h2>Editar Hábito</h2>
+    <h2>Edit habit</h2>
 
     <div class="form-group">
-      <label for="editHabitName">Nombre</label>
+      <label for="editHabitName">Name</label>
       <input type="text" id="editHabitName" maxlength="100" required>
     </div>
 
     <div class="form-group">
-      <label for="editHabitDesc">Descripción</label>
+      <label for="editHabitDesc">Description</label>
       <textarea id="editHabitDesc" maxlength="500" placeholder="Descripción (opcional)"></textarea>
     </div>
 
     <div class="form-group">
-      <label for="editHabitGoal">Meta diaria (días)</label>
+      <label for="editHabitGoal">Daily goal (days)</label>
       <input type="number" id="editHabitGoal" min="1" value="30" required>
     </div>
 
     <div class="form-group">
-      <label for="editHabitArea">Área (opcional)</label>
+      <label for="editHabitArea">Area (opcional)</label>
       <select id="editHabitArea">
-        <option value="">-- Sin área --</option>
+        <option value="">-- Without area --</option>
         <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.name}"></option>
       </select>
     </div>
 
     <div class="modal-buttons">
-      <button id="cancelEditHabitBtn" class="btn-cancel">Cancelar</button>
-      <button id="saveEditHabitBtn" class="btn-primary">Guardar Cambios</button>
+      <button id="cancelEditHabitBtn" class="btn-cancel">Cancel</button>
+      <button id="saveEditHabitBtn" class="btn-primary">Save changes</button>
     </div>
   </div>
 </div>
@@ -38,14 +38,14 @@
 <!-- ✅ MODAL ELIMINAR HÁBITO -->
 <div th:fragment="deleteHabitModal" id="deleteHabitModal" class="modal hidden">
   <div class="modal-content">
-    <h2>⚠️ Eliminar Hábito</h2>
-    <p>¿Estás seguro de que quieres eliminar este hábito?</p>
+    <h2>⚠️ Delete Habit</h2>
+    <p>Are you sure you want to delete this habit? </p>
     <p><strong id="deleteHabitName"></strong></p>
-    <p style="color: #999; font-size: 0.9rem;">Esta acción es irreversible</p>
+    <p style="color: #999; font-size: 0.9rem;">This action is irreversible</p>
 
     <div class="modal-buttons">
-      <button id="cancelDeleteHabitBtn" class="btn-cancel">Cancelar</button>
-      <button id="confirmDeleteHabitBtn" class="btn-danger">Eliminar</button>
+      <button id="cancelDeleteHabitBtn" class="btn-cancel">Cancel</button>
+      <button id="confirmDeleteHabitBtn" class="btn-danger">Delete</button>
     </div>
   </div>
 </div>

@@ -23,7 +23,6 @@
         <a th:href="@{/home}">Home</a>
         <a th:href="@{/todos}" class="active">To-dos</a>
         <a th:href="@{/habits}">Habits</a>
-        <a th:href="@{/profile}">Profile</a>
       </nav>
       <div class="logout"><a th:href="@{/logout}">Log out</a></div>
     </aside>
@@ -60,8 +59,8 @@
     
     <!-- Menú desplegable para cada lista -->
     <div class="list-item-menu hidden" th:id="'listmenu-' + ${list.listTodoId}">
-      <button class="menu-item edit-list-btn" th:data-list-id="${list.listTodoId}">Editar</button>
-      <button class="menu-item delete-list-btn" th:data-list-id="${list.listTodoId}">Eliminar</button>
+      <button class="menu-item edit-list-btn" th:data-list-id="${list.listTodoId}">Edit</button>
+      <button class="menu-item delete-list-btn" th:data-list-id="${list.listTodoId}">Delete</button>
     </div>
   </li>
 

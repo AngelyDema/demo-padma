@@ -25,12 +25,11 @@
       <nav class="menu">
         <a th:href="@{/home}" data-section="home">Home</a>
         <a th:href="@{/todos}" data-section="todos">To-dos</a>
-        <a th:href="@{/habits}" class="active" data-section="habits"> Hábitos</a>
-        <a th:href="@{/profile}" data-section="profile">Perfil</a>
+        <a th:href="@{/habits}" class="active" data-section="habits"> Habits</a>
       </nav>
 
       <div class="logout">
-        <a th:href="@{/logout}">Salir</a>
+        <a th:href="@{/logout}">Log out</a>
       </div>
     </aside>
 
@@ -51,28 +50,28 @@
           </div>
     </li>
     <li th:if="${#lists.isEmpty(areas)}">
-      <p>No tienes áreas aún.</p>
+      <p>No areas here</p>
     </li>
   </ul>
 
   <!-- ✅ MODAL PARA CREAR ÁREA -->
 <div id="createAreaModal" class="modal hidden">
   <div class="modal-content">
-    <h2>Crear Área</h2>
+    <h2>Create Area</h2>
     
     <div class="form-group">
-      <label for="modalAreaName">Nombre</label>
+      <label for="modalAreaName">Name</label>
       <input type="text" id="modalAreaName" maxlength="50" required>
     </div>
 
     <div class="form-group">
-      <label for="modalAreaDesc">Descripción</label>
+      <label for="modalAreaDesc">Description</label>
       <textarea id="modalAreaDesc" maxlength="500" placeholder="Descripción (opcional)"></textarea>
     </div>
 
     <div class="modal-buttons">
-      <button id="cancelAreaBtn" class="btn-cancel">Cancelar</button>
-      <button id="saveAreaBtn" class="btn-primary">Guardar</button>
+      <button id="cancelAreaBtn" class="btn-cancel">Cancel</button>
+      <button id="saveAreaBtn" class="btn-primary">Save</button>
     </div>
   </div>
 </div>
@@ -86,14 +85,14 @@
     <!-- Contenido principal -->
     <main class="main-content">
       <header class="welcome">
-        <h1>Hola, <span th:text="${user != null ? user.name : 'Usuario'}">Usuario</span> 👋</h1>
-        <p>Gestiona tus hábitos para hoy y tus áreas.</p>
+        <h1>Hi, <span th:text="${user != null ? user.name : 'Usuario'}">Usuario</span> 👋</h1>
+        <p>Manage your habits and areas.</p>
       </header>
 
       <section class="card-container">
         <!-- Formulario para crear nuevo hábito - EXPANDIBLE -->
 <div class="card create-habit-card">
-  <h2>Crear nuevo hábito</h2>
+  <h2>Create a new habit</h2>
   
   <!-- INPUT INICIAL (siempre visible) -->
   <div class="habit-input-group">
@@ -105,26 +104,26 @@
   <form id="habitForm" class="habit-form hidden">
     
     <div class="form-group">
-      <label for="habitDesc">Descripción</label>
+      <label for="habitDesc">Description</label>
       <textarea id="habitDesc" placeholder="Descripción (opcional)" maxlength="500"></textarea>
     </div>
 
     <div class="form-group">
-      <label for="habitGoal">Meta diaria (días)</label>
+      <label for="habitGoal">Daily goal (days)</label>
       <input type="number" id="habitGoal" placeholder="30" min="1" value="30" required>
     </div>
 
     <div class="form-group">
-      <label for="habitArea">Área (opcional)</label>
+      <label for="habitArea">Area (opcional)</label>
       <select id="habitArea">
-        <option value="">-- Sin área --</option>
+        <option value="">-- Without area --</option>
         <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.name}"></option>
       </select>
     </div>
 
     <div class="form-buttons">
-      <button type="button" id="cancelHabitBtn" class="btn-cancel">Cancelar</button>
-      <button type="submit" class="btn-primary">Crear Hábito</button>
+      <button type="button" id="cancelHabitBtn" class="btn-cancel">Cancel</button>
+      <button type="submit" class="btn-primary">Create Habit</button>
     </div>
   </form>
 </div>
@@ -133,7 +132,7 @@
         <!-- Lista de hábitos -->  
 <!-- Lista de hábitos en habits.html -->
 <div class="card">
-  <h2>Tus hábitos</h2>
+  <h2>Your habits</h2>
   <ul class="habit-list">
   <li th:each="habit : ${habits}" 
       class="habit-item-wrapper"

@@ -63,8 +63,4 @@ public class User {
     @JsonIgnore
     private List<ListTodo> listTodo = new ArrayList<>();
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Notification> notifications = new ArrayList<>();
-
 }

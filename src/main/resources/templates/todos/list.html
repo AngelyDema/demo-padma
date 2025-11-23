@@ -18,7 +18,6 @@
         <a th:href="@{/home}">Home</a>
         <a th:href="@{/todos}" class="active">To-dos</a>
         <a th:href="@{/habits}">Habits</a>
-        <a th:href="@{/profile}">Profile</a>
       </nav>
       <div class="logout"><a th:href="@{/logout}">Log out</a></div>
     </aside>
@@ -46,21 +45,21 @@
 <!-- ✅ MODAL EDITAR LISTA -->
 <div id="editListModal" class="modal hidden">
   <div class="modal-content">
-    <h2>Editar Lista</h2>
+    <h2>Edit List</h2>
     
     <div class="form-group">
-      <label for="editListName">Nombre</label>
+      <label for="editListName">Name</label>
       <input type="text" id="editListName" maxlength="50" required>
     </div>
 
     <div class="form-group">
-      <label for="editListDesc">Descripción</label>
+      <label for="editListDesc">Description</label>
       <textarea id="editListDesc" maxlength="500" placeholder="Descripción (opcional)"></textarea>
     </div>
 
     <div class="modal-buttons">
-      <button id="cancelEditListBtn" class="btn-cancel">Cancelar</button>
-      <button id="saveEditListBtn" class="btn-primary">Guardar Cambios</button>
+      <button id="cancelEditListBtn" class="btn-cancel">Cancel</button>
+      <button id="saveEditListBtn" class="btn-primary">Save changes</button>
     </div>
   </div>
 </div>
@@ -74,7 +73,7 @@
 
     <div class="modal-buttons">
       <button id="cancelDeleteListBtn" class="btn-cancel">Cancel</button>
-      <button id="confirmDeleteListBtn" class="btn-danger">Eliminar</button>
+      <button id="confirmDeleteListBtn" class="btn-danger">Delete</button>
     </div>
   </div>
 </div>
