@@ -1,0 +1,51 @@
+<!-- editHabit.html - Fragment for edit/delete habit modals -->
+
+<!-- ✅ MODAL EDITAR HÁBITO -->
+<div th:fragment="editHabitModal" id="editHabitModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Editar Hábito</h2>
+
+    <div class="form-group">
+      <label for="editHabitName">Nombre</label>
+      <input type="text" id="editHabitName" maxlength="100" required>
+    </div>
+
+    <div class="form-group">
+      <label for="editHabitDesc">Descripción</label>
+      <textarea id="editHabitDesc" maxlength="500" placeholder="Descripción (opcional)"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="editHabitGoal">Meta diaria (días)</label>
+      <input type="number" id="editHabitGoal" min="1" value="30" required>
+    </div>
+
+    <div class="form-group">
+      <label for="editHabitArea">Área (opcional)</label>
+      <select id="editHabitArea">
+        <option value="">-- Sin área --</option>
+        <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.name}"></option>
+      </select>
+    </div>
+
+    <div class="modal-buttons">
+      <button id="cancelEditHabitBtn" class="btn-cancel">Cancelar</button>
+      <button id="saveEditHabitBtn" class="btn-primary">Guardar Cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ MODAL ELIMINAR HÁBITO -->
+<div th:fragment="deleteHabitModal" id="deleteHabitModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>⚠️ Eliminar Hábito</h2>
+    <p>¿Estás seguro de que quieres eliminar este hábito?</p>
+    <p><strong id="deleteHabitName"></strong></p>
+    <p style="color: #999; font-size: 0.9rem;">Esta acción es irreversible</p>
+
+    <div class="modal-buttons">
+      <button id="cancelDeleteHabitBtn" class="btn-cancel">Cancelar</button>
+      <button id="confirmDeleteHabitBtn" class="btn-danger">Eliminar</button>
+    </div>
+  </div>
+</div>

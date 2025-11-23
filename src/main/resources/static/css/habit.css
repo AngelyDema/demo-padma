@@ -365,19 +365,7 @@ body {
   font-size: 0.95rem;
 }
 
-.area-list a:hover,
-.area-list a.active {
-  background: white;
-  color: #f7b1c3;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
 
-.area-list p {
-  color: #999;
-  font-size: 0.9rem;
-  text-align: center;
-  padding: 20px 10px;
-}
 
 /* ===== FORMULARIO NUEVA ÁREA ===== */
 .new-area-form {
@@ -424,3 +412,70 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(247, 177, 195, 0.3);
 }
+
+/* ===== BOTÓN MENÚ HABITS ===== */
+.habit-menu-btn {
+  background: none;
+  margin-left: auto;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 8px 12px;
+  color: #999;
+  transition: all 0.3s;
+  position: relative;
+  z-index: 50;
+}
+
+.habit-menu-btn:hover {
+  color: #414040;
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+/* ===== MENÚ DESPLEGABLE HABITS ===== */
+.habit-menu {
+  display: none;
+  position: absolute;
+  margin-top: 5px;
+  right: 2px;
+  background: white;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  min-width: 150px;
+  overflow: hidden;
+}
+
+.habit-menu:not(.hidden) {
+  display: block;
+  animation: slideDown 0.2s ease-out;
+}
+
+.habit-menu.hidden {
+  display: none;
+}
+
+/* Menú items */
+.habit-menu .menu-item {
+  width: 100%;
+  padding: 10px 15px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  font-family: "Poppins", sans-serif;
+}
+
+.habit-menu .menu-item:not(:last-child) {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.habit-menu .menu-item:hover {
+  background: #f9f9f9;
+}
+

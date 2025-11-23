@@ -1,0 +1,210 @@
+/* ========== AREA SIDEBAR ========== */
+.area-sidebar {
+  width: 220px;
+  background: #f9f9f9;
+  padding: 20px;
+  border-right: 1px solid #dcdcdc;
+  display: flex;
+  flex-direction: column;
+}
+
+.area-sidebar h3 {
+  margin: 0 0 15px 0;
+  color: #414040;
+  font-size: 1.1rem;
+}
+
+.area-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+  flex: 1;
+}
+
+/* ========== AREA ITEM WRAPPER ========== */
+/* CRITICAL: Apply to ALL <li> elements, not just .area-item-wrapper */
+.area-list li,
+.area-item-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+  position: relative; /* REQUIRED for absolute menu positioning */
+}
+
+.area-list li:hover,
+.area-item-wrapper:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* Link styling */
+.area-list li a,
+.area-item-wrapper a {
+  flex: 1;
+  text-decoration: none;
+  color: #414040;
+  font-size: 0.95rem;
+  padding: 4px 0;
+}
+
+/* ========== THREE DOTS BUTTON ========== */
+.area-menu-btn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #999;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  opacity: 0; /* Hidden by default */
+  visibility: hidden;
+}
+
+/* Show on hover of the row */
+.area-list li:hover .area-menu-btn,
+.area-item-wrapper:hover .area-menu-btn {
+  opacity: 1;
+  visibility: visible;
+}
+
+.area-menu-btn:hover {
+  background-color: #e8e8e8;
+  color: #414040;
+}
+
+/* Keep visible when menu is open */
+.area-menu-btn.active {
+  opacity: 1;
+  visibility: visible;
+  background-color: #e8e8e8;
+  color: #414040;
+}
+
+/* ========== DROPDOWN MENU ========== */
+.area-item-menu {
+  position: absolute;
+  top: 100%; /* Directly below the parent */
+  right: 0;  /* Aligned to right edge */
+  background-color: #fff;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 130px;
+  z-index: 1000;
+  margin-top: 4px;
+  overflow: hidden;
+  animation: slideDown 0.15s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.area-item-menu.hidden {
+  display: none;
+}
+
+/* Menu items */
+.area-item-menu .menu-item {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: #414040;
+  transition: background-color 0.15s ease;
+}
+
+.area-item-menu .menu-item:not(:last-child) {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.area-item-menu .menu-item:hover {
+  background-color: #f5f5f5;
+}
+
+/* Delete button danger style */
+.area-item-menu .menu-item.delete-area-btn {
+  color: #dc3545;
+}
+
+.area-item-menu .menu-item.delete-area-btn:hover {
+  background-color: rgba(220, 53, 69, 0.08);
+}
+
+/* ========== NEW AREA FORM ========== */
+.new-area-form {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px solid #dcdcdc;
+}
+
+.new-area-form input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.new-area-form input:focus {
+  outline: none;
+  border-color: #f7b1c3;
+  box-shadow: 0 0 0 3px rgba(247, 177, 195, 0.15);
+}
+
+.new-area-form button {
+  width: 35px;
+  height: 35px;
+  background: #f7b1c3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.new-area-form button:hover {
+  background: #f09ab0;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(247, 177, 195, 0.3);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .area-sidebar {
+    width: 100%;
+    max-height: 30vh;
+    border-right: none;
+    border-bottom: 1px solid #dcdcdc;
+  }
+
+  /* Always show menu button on mobile */
+  .area-menu-btn {
+    opacity: 1;
+    visibility: visible;
+  }
+}

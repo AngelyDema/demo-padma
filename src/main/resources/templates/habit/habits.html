@@ -5,9 +5,11 @@
   <title>Padma | Hábitos</title>
   
   <link rel="stylesheet" th:href="@{/css/layout.css}">
+  <link rel="stylesheet" th:href="@{/css/area.css}">
   <link rel="stylesheet" th:href="@{/css/habit.css}">
   <link rel="stylesheet" th:href="@{/css/modal.css}">
  <link rel="stylesheet" th:href="@{/css/habits.css}">
+ 
 
 </head>
 
@@ -37,8 +39,16 @@
   <h3>Áreas</h3>
   
   <ul class="area-list">
-    <li th:each="area : ${areas}">
+    <li th:each="area : ${areas}" class="area-item-wrapper">
       <a th:href="@{'/habits/area/' + ${area.areaId}}" th:text="${area.name}">Área ejemplo</a>
+      <!-- Botón ⋮ para cada área -->
+          <button class="area-menu-btn" th:data-area-id="${area.areaId}">⋮</button>
+          
+          <!-- Menú desplegable para cada área -->
+          <div class="area-item-menu hidden" th:id="'areamenu-' + ${area.areaId}">
+            <button class="menu-item edit-area-btn" th:data-area-id="${area.areaId}">Edit</button>
+            <button class="menu-item delete-area-btn" th:data-area-id="${area.areaId}">Delete</button>
+          </div>
     </li>
     <li th:if="${#lists.isEmpty(areas)}">
       <p>No tienes áreas aún.</p>
@@ -125,40 +135,47 @@
 <div class="card">
   <h2>Tus hábitos</h2>
   <ul class="habit-list">
-    <li th:each="habit : ${habits}" 
-        class="habit-item-wrapper"
-        th:classappend="${habit.completed} ? ' completed' : ''">
-      
-      <!-- Checkbox -->
-      <input type="checkbox" 
-             class="habit-checkbox"
-             th:data-habit-id="${habit.habitId}"
-             th:checked="${habit.completed}">
-      
-      <!-- Info del hábito (nombre + racha JUNTOS) -->
-      <div class="habit-info">
-        <span class="habit-title" th:text="${habit.title}">Habit title</span>
-        
-        <!-- Racha como badge -->
-        <span class="habit-streak-badge">
-          🔥 <span th:text="${habit.habitHistory != null ? habit.habitHistory.currentStreak : 0}">0</span>
-        </span>
-      </div>
-    </li>
+  <li th:each="habit : ${habits}" 
+      class="habit-item-wrapper"
+      th:classappend="${habit.completed} ? ' completed' : ''">
     
-    <li th:if="${#lists.isEmpty(habits)}" class="empty-state">
-      <p>You haven't create habits yet 🌷</p>
-    </li>
-  </ul>
+    <input type="checkbox"
+           class="habit-checkbox"
+           th:data-habit-id="${habit.habitId}"
+           th:checked="${habit.completed}">
+    
+    <div class="habit-info">
+      <span class="habit-title" th:text="${habit.title}">Habit title</span>
+      <span class="habit-streak-badge">
+        🔥 <span th:text="${habit.habitHistory != null ? habit.habitHistory.currentStreak : 0}">0</span>
+      </span>
+    </div>
+
+    <!-- Botón menú -->
+    <button class="habit-menu-btn" th:data-habit-id="${habit.habitId}">⋮</button>
+
+    <!-- Menú desplegable -->
+    <div class="habit-menu hidden" th:id="'habit-menu-' + ${habit.habitId}">
+      <button class="menu-item edit-habit-btn" th:data-habit-id="${habit.habitId}">Edit</button>
+      <button class="menu-item delete-habit-btn" th:data-habit-id="${habit.habitId}">Delete</button>
+    </div>
+
+  </li>
+
 </div>
 
 
 <div th:replace="fragments/completeHabit :: completeHabitModal"></div>
+<div th:replace="fragments/editHabit :: editHabitModal"></div>
+<div th:replace="fragments/editHabit :: deleteHabitModal"></div>
+<div th:replace="fragments/editArea :: editAreaModal"></div>
+<div th:replace="fragments/editArea :: deleteAreaModal"></div>
 
 
       </section>
     </main>
   </div>
   <script defer th:src="@{/js/habit.js}"></script>
+  <script defer th:src="@{/js/area.js}"></script>
 </body>
 </html>

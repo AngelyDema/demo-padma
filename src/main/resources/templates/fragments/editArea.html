@@ -1,0 +1,35 @@
+<!-- ✅ MODAL EDITAR ÁREA -->
+      <div th:fragment= "editAreaModal" id="editAreaModal" class="modal hidden">
+        <div class="modal-content">
+          <h2>Editar Área</h2>
+          
+          <div class="form-group">
+            <label for="editAreaName">Nombre</label>
+            <input type="text" id="editAreaName" maxlength="50" required>
+          </div>
+
+          <div class="form-group">
+            <label for="editAreaDesc">Descripción</label>
+            <textarea id="editAreaDesc" maxlength="500" placeholder="Descripción (opcional)"></textarea>
+          </div>
+
+          <div class="modal-buttons">
+            <button id="cancelEditAreaBtn" class="btn-cancel">Cancelar</button>
+            <button id="saveEditAreaBtn" class="btn-primary">Guardar Cambios</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ✅ MODAL ELIMINAR ÁREA -->
+      <div th:fragment= "deleteAreaModal" id="deleteAreaModal" class="modal hidden">
+        <div class="modal-content">
+          <h2>⚠️ Delete Area</h2>
+          <p id="deleteAreaWarning">Do you want to delete this area "<strong id="deleteAreaName"></strong>"?</p>
+          <p style="color: #999; font-size: 0.9rem;">This action is irreversible</p>
+
+          <div class="modal-buttons">
+            <button id="cancelDeleteAreaBtn" class="btn-cancel">Cancel</button>
+            <button id="confirmDeleteAreaBtn" class="btn-danger">Eliminar</button>
+          </div>
+        </div>
+      </div>

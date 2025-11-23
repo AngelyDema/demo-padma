@@ -1,10 +1,6 @@
 package com.padma.demo.controllers;
 
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import com.padma.demo.models.Area;
 import com.padma.demo.services.AreaService;
@@ -59,6 +55,50 @@ public class AreaController {
 
         } catch (RuntimeException e) {
             log.error("❌ Error creando área: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // UPDATE AREA
+
+    @PutMapping("/id/{areaId}")
+    public ResponseEntity<?> updateArea(
+            @PathVariable Long areaId,
+            @RequestBody Area updatedArea) {
+
+        log.info("==> PUT /api/areas/id/{}", areaId);
+        log.debug("📋 Payload recibido: {}", updatedArea);
+
+        try {
+            Area updated = areaService.updateArea(areaId, updatedArea);
+
+            Map<String, Object> res = new HashMap<>();
+            res.put("areaId", updated.getAreaId());
+            res.put("name", updated.getName());
+            res.put("description", updated.getDescription());
+
+            return new ResponseEntity<>(res, HttpStatus.OK);
+
+        } catch (RuntimeException e) {
+            log.error("❌ Error actualizando área: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // DELETE AREA
+
+    @DeleteMapping("/id/{areaId}")
+    public ResponseEntity<?> deleteArea(@PathVariable Long areaId) {
+
+        log.info("==> DELETE /api/areas/id/{}", areaId);
+
+        try {
+            areaService.deleteArea(areaId);
+            return ResponseEntity.ok(Map.of("message", "Área eliminada exitosamente"));
+        } catch (RuntimeException e) {
+            log.error("❌ Error eliminando área: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", e.getMessage()));
         }

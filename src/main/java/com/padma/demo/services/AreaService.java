@@ -19,6 +19,12 @@ public class AreaService {
         this.userRepository = userRepository;
     }
 
+    // gET AREA BY ID
+    public Area getAreaById(Long areaId) {
+        return areaRepository.findById(areaId)
+                .orElseThrow(() -> new RuntimeException("Área no encontrada con ID: " + areaId));
+    }
+
     // Crear un área
     @Transactional
     public Area createArea(Area area) {
@@ -47,6 +53,35 @@ public class AreaService {
     // Obtener todos los hábitos de un usuario
     public List<Area> getAreasByUser(Long userId) {
         return areaRepository.findAllByUsers_UserId(userId);
+    }
+
+    // editar area
+
+    @Transactional
+    public Area updateArea(Long areaId, Area updatedData) {
+
+        Area existing = areaRepository.findById(areaId)
+                .orElseThrow(() -> new RuntimeException("Area not found with id: " + areaId));
+
+        if (updatedData.getName() != null && !updatedData.getName().trim().isEmpty()) {
+            existing.setName(updatedData.getName());
+        }
+
+        if (updatedData.getDescription() != null) {
+            existing.setDescription(updatedData.getDescription());
+        }
+
+        return areaRepository.save(existing);
+    }
+
+    // DELETE AREA
+    @Transactional
+    public void deleteArea(Long areaId) {
+
+        Area area = areaRepository.findById(areaId)
+                .orElseThrow(() -> new RuntimeException("Area not found with id: " + areaId));
+
+        areaRepository.delete(area);
     }
 
 }

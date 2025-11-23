@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:attr="data-user-id=${userId}">
+<head>
+  <meta charset="UTF-8">
+  <title>Padma | Áreas</title>
+  <link rel="stylesheet" th:href="@{/css/layout.css}">
+  <link rel="stylesheet" th:href="@{/css/habits.css}">
+  <link rel="stylesheet" th:href="@{/css/area.css}">
+   <link rel="stylesheet" th:href="@{/css/habit.css}">
+   <link rel="stylesheet" th:href="@{/css/modal.css}">
+</head>
+<body th:attr="data-user-id=${userId}">
+  <div class="dashboard">
+    <!-- Sidebar principal -->
+    <aside class="sidebar">
+      <div class="logo"><h2>PADMA</h2></div>
+      <nav class="menu">
+        <a th:href="@{/home}">Home</a>
+        <a th:href="@{/todos}">To-dos</a>
+        <a th:href="@{/habits}" class="active">Habits</a>
+      </nav>
+      <div class="logout"><a th:href="@{/logout}">Log out</a></div>
+    </aside>
+
+    <!-- Sidebar secundaria: Áreas -->
+    <aside class="area-sidebar">
+      <!-- Encabezado de Áreas con botón de crear -->
+      <div class="sidebar-header">
+        <h3>Áreas</h3>
+      </div>
+
+      <!-- ✅ LISTA DE ÁREAS DEL USUARIO -->
+      <ul class="area-list">
+        <li th:each="area : ${areas}" class="area-item-wrapper">
+          <a th:href="@{'/habits/area/' + ${area.areaId}}" th:text="${area.name}" class="area-link"></a>
+
+          <!-- Botón ⋮ para cada área -->
+          <button class="area-menu-btn" th:data-area-id="${area.areaId}">⋮</button>
+          
+          <!-- Menú desplegable para cada área -->
+          <div class="area-item-menu hidden" th:id="'areamenu-' + ${area.areaId}">
+            <button class="menu-item edit-area-btn" th:data-area-id="${area.areaId}">Edit</button>
+            <button class="menu-item delete-area-btn" th:data-area-id="${area.areaId}">Delete</button>
+          </div>
+        </li>
+
+        <li th:if="${#lists.isEmpty(areas)}">
+          <p>No areas yet</p>
+        </li>
+      </ul>
+
+      <!-- ✅ MODAL PARA CREAR ÁREA -->
+<div id="createAreaModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Crear Área</h2>
+    
+    <div class="form-group">
+      <label for="modalAreaName">Nombre</label>
+      <input type="text" id="modalAreaName" maxlength="50" required>
+    </div>
+
+    <div class="form-group">
+      <label for="modalAreaDesc">Descripción</label>
+      <textarea id="modalAreaDesc" maxlength="500" placeholder="Descripción (opcional)"></textarea>
+    </div>
+
+    <div class="modal-buttons">
+      <button id="cancelAreaBtn" class="btn-cancel">Cancelar</button>
+      <button id="saveAreaBtn" class="btn-primary">Guardar</button>
+    </div>
+  </div>
+</div>
+  <!-- ✅ FORMULARIO PARA CREAR ÁREA -->
+  <div class="new-area-form">
+    <input type="text" id="areaNameInput" placeholder="Nueva área" maxlength="50">
+    <button type="button" id="createAreaBtn">+</button>
+  </div>
+</aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+      <header class="header">
+        <h1 th:text="${areaName}">Area</h1>
+        <p th:text="${areaDescription}">Description</p>
+        <p class="area-meta" th:text="'(' + ${habits.size()} + ' hábitos)'"></p>
+      </header>
+
+      <section class="card-container">
+        <!-- Formulario para crear nuevo hábito - EXPANDIBLE -->
+<div class="card create-habit-card">
+  <h2>Crear nuevo hábito</h2>
+  
+  <!-- INPUT INICIAL (siempre visible) -->
+  <div class="habit-input-group">
+    <input type="text" id="habitTitle" placeholder="Nombre del hábito" maxlength="100" required>
+    <button type="button" id="toggleHabitMoreBtn" class="more-btn">⋮</button>
+  </div>
+
+  <!-- FORMULARIO EXPANDIBLE (oculto por defecto) -->
+  <form id="habitForm" class="habit-form hidden">
+    
+    <div class="form-group">
+      <label for="habitDesc">Descripción</label>
+      <textarea id="habitDesc" placeholder="Descripción (opcional)" maxlength="500"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="habitGoal">Meta diaria (días)</label>
+      <input type="number" id="habitGoal" placeholder="30" min="1" value="30" required>
+    </div>
+
+    <div class="form-group">
+      <label for="habitArea">Área (opcional)</label>
+      <select id="habitArea">
+        <option value="">-- Sin área --</option>
+        <option th:each="area : ${areas}" th:value="${area.areaId}" th:text="${area.name}"></option>
+      </select>
+    </div>
+
+    <div class="form-buttons">
+      <button type="button" id="cancelHabitBtn" class="btn-cancel">Cancelar</button>
+      <button type="submit" class="btn-primary">Crear Hábito</button>
+    </div>
+  </form>
+</div>
+
+
+      <!-- Lista de hábitos en el área -->
+      <section class="habits-list">
+        <ul>
+          <li th:each="habit : ${habits}" class="habit-item-wrapper">
+            <input type="checkbox" 
+             class="habit-checkbox"
+             th:data-habit-id="${habit.habitId}"
+             th:checked="${habit.completed}">
+              <!-- Info del hábito (nombre + racha JUNTOS) -->
+      <div class="habit-info">
+        <span class="habit-title" th:text="${habit.title}">Habit title</span>
+        
+        <!-- Racha como badge -->
+        <span class="habit-streak-badge">
+          🔥 <span th:text="${habit.habitHistory != null ? habit.habitHistory.currentStreak : 0}">0</span>
+        </span>
+            </div>
+
+            <!-- Botón menú -->
+            <button class="habit-menu-btn" th:data-habit-id="${habit.habitId}">⋮</button>
+            
+            <!-- Menú desplegable -->
+            <div class="habit-menu hidden" th:id="'habit-menu-' + ${habit.habitId}">
+              <button class="menu-item edit-habit-btn" th:data-habit-id="${habit.habitId}">Edit</button>
+              <button class="menu-item delete-habit-btn" th:data-habit-id="${habit.habitId}">Delete</button>
+            </div>
+          </li>
+
+          <li th:if="${#lists.isEmpty(habits)}" class="empty-state">
+            <p>No habits in this area 🌱</p>
+          </li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <div th:replace="fragments/completeHabit :: completeHabitModal"></div>
+  <div th:replace="fragments/editHabit :: editHabitModal"></div>
+  <div th:replace="fragments/editHabit :: deleteHabitModal"></div>
+  <div th:replace="fragments/editArea :: editAreaModal"></div>
+  <div th:replace="fragments/editArea :: deleteAreaModal"></div>
+
+  <script defer th:src="@{/js/area.js}"></script>
+  <script defer th:src="@{/js/habit.js}"></script>
+</body>
+</html>

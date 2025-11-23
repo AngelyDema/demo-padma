@@ -14,6 +14,7 @@ import com.padma.demo.services.HabitHistoryService;
 import com.padma.demo.services.HabitCompletionService;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import javax.management.RuntimeErrorException;
 
@@ -44,6 +45,12 @@ public class HabitService {
 
     public List<Habit> getHabitsByUserId(Long userId) {
         return habitRepository.findAllByUsers_UserId(userId);
+    }
+
+    // GET HABITS BY AREA AND USER
+    public List<Habit> getHabitsByAreaAndUser(Long areaId, Long userId) {
+        log.debug("🔍 Obteniendo hábitos del área {} para el usuario {}", areaId, userId);
+        return habitRepository.findAllByAreas_AreaIdAndUsers_UserId(areaId, userId);
     }
 
     // Crear un hábito
@@ -104,14 +111,14 @@ public class HabitService {
         return habitRepository.save(habit);
     }
 
-    // ✅ FIXED: Unmark with note deletion
+    // Unmark with note deletion
     public Habit unmarkHabitAsCompleted(Long habitId) {
         Habit habit = habitRepository.findById(habitId)
                 .orElseThrow(() -> new RuntimeException("Hábito no encontrado con ID: " + habitId));
 
         LocalDate today = LocalDate.now();
 
-        // ✅ NEW: Verify it was completed today
+        // Verify it was completed today
         HabitHistory history = habitHistoryRepository
                 .findByHabit_HabitId(habitId)
                 .orElseThrow(() -> new RuntimeException("HabitHistory no encontrado"));
@@ -121,7 +128,7 @@ public class HabitService {
             throw new RuntimeException("Este hábito no fue completado hoy");
         }
 
-        // ✅ NEW: Delete today's completion note
+        // Delete today's completion note
         habitCompletionService.deleteTodayCompletion(history.getHabitHistoryId());
 
         // Update streak
@@ -131,7 +138,7 @@ public class HabitService {
         return habitRepository.save(habit);
     }
 
-    // ✅ UPDATED: Also recalculates streaks on page load
+    // Also recalculates streaks on page load
     public void resetDailyCompletionFlags(Long userId) {
         List<Habit> habits = habitRepository.findAllByUsers_UserId(userId);
         LocalDate today = LocalDate.now();
@@ -149,9 +156,60 @@ public class HabitService {
                 habitRepository.save(habit);
             }
 
-            // ✅ NEW: Recalculate streak on every page load
+            // Recalculate streak on every page load
             habitHistoryService.recalculateStreakOnPageLoad(habit);
         });
+    }
+
+    // Actualizar un hábito existente
+    public Habit updateHabit(Long habitId, Map<String, Object> data) {
+        Habit habit = habitRepository.findById(habitId)
+                .orElseThrow(() -> new RuntimeException("Hábito no encontrado con ID: " + habitId));
+
+        // Actualizar campos si están presentes en el payload
+        if (data.containsKey("title")) {
+            Object v = data.get("title");
+            if (v != null)
+                habit.setTitle(v.toString());
+        }
+        if (data.containsKey("description")) {
+            Object v = data.get("description");
+            habit.setDescription(v != null ? v.toString() : null);
+        }
+        if (data.containsKey("goal")) {
+            Object v = data.get("goal");
+            if (v != null) {
+                int g = Integer.parseInt(v.toString());
+                habit.setGoal(g);
+            }
+        }
+        if (data.containsKey("areaId")) {
+            Object v = data.get("areaId");
+            if (v != null) {
+                Long areaId = Long.valueOf(v.toString());
+                Area area = new Area();
+                area.setAreaId(areaId);
+                habit.setAreas(area);
+            } else {
+                habit.setAreas(null);
+            }
+        }
+        // Si quieres permitir cambiar el estado de completado o fecha, añade aquí:
+        if (data.containsKey("completed")) {
+            Object v = data.get("completed");
+            if (v != null)
+                habit.setCompleted(Boolean.parseBoolean(v.toString()));
+        }
+
+        // Persistir cambios
+        return habitRepository.save(habit);
+    }
+
+    // ✅ Eliminar un hábito
+    public void deleteHabit(Long habitId) {
+        Habit existingHabit = habitRepository.findByHabitId(habitId)
+                .orElseThrow(() -> new RuntimeException("Habit not found with ID: " + habitId));
+        habitRepository.delete(existingHabit);
     }
 
 }

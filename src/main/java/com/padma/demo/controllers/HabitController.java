@@ -81,6 +81,40 @@ public class HabitController {
         }
     }
 
+    // EDIT HABIT
+    @PutMapping("/{habitId}")
+    public ResponseEntity<?> updateHabit(
+            @PathVariable Long habitId,
+            @RequestBody Map<String, Object> request) {
+        log.info("==> PUT /api/habits/{}", habitId);
+        try {
+            habitService.updateHabit(habitId, request);
+            log.info("✅ Habito actualizado: {}", habitId);
+            return ResponseEntity.ok(Map.of("message", "Habito actualizado")); // ✅ Simple response
+        } catch (Exception e) {
+            log.error("❌ Error: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // DELETE HABIT
+    @DeleteMapping("/{habitId}")
+    public ResponseEntity<?> deleteHabit(@PathVariable Long habitId) {
+        log.info("==> DELETE /api/habits/{}", habitId);
+
+        try {
+            habitService.deleteHabit(habitId);
+            log.info("✅ Hábito eliminado: {}", habitId);
+            return ResponseEntity.ok(Map.of("message", "Hábito eliminado exitosamente"));
+
+        } catch (Exception e) {
+            log.error("❌ Error eliminando hábito: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
     @PostMapping("/{habitId}/complete")
     public ResponseEntity<?> markHabitAsCompleted(
             @PathVariable Long habitId,
@@ -148,7 +182,6 @@ public class HabitController {
         }
     }
 
-    // ✅ SIMPLIFIED: Just return current state, don't modify
     @GetMapping("/validate-completion-status/{userId}")
     public ResponseEntity<?> validateCompletionStatus(@PathVariable Long userId) {
         log.info("==> GET /api/habits/validate-completion-status/{}", userId);

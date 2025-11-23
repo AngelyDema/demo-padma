@@ -147,7 +147,7 @@ public class TodoViewController {
             HttpSession session) {
 
         log.info("==> GET /todos/list/{}", listId);
-        log.debug("📍 listId recibido: {}", listId); // ← AGREGA ESTO
+        log.debug("📍 listId recibido: {}", listId); //
 
         Long userId = (Long) session.getAttribute("LOGGED_USER_ID");
         if (userId == null) {
@@ -156,7 +156,7 @@ public class TodoViewController {
         }
 
         try {
-            log.debug("🔍 Buscando lista con ID: {}", listId); // ← AGREGA ESTO
+            log.debug("🔍 Buscando lista con ID: {}", listId); //
 
             ListTodo list = listService.getListById(listId);
             List<Todo> todos = listService.getTodosByList(listId);

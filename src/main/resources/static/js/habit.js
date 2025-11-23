@@ -2,6 +2,11 @@
 document.addEventListener('DOMContentLoaded', function() {
   console.log('🟢 Habits.js cargado y DOM listo');
   
+  const userId = document.querySelector('body').getAttribute('data-user-id');
+
+  // ✅ VALIDATE COMPLETION STATUS ON PAGE LOAD (Backend validation)
+  validateCompletionStatus();
+
   // ===== CREAR HÁBITO =====
   const habitTitle = document.getElementById('habitTitle');
   const habitForm = document.getElementById('habitForm');
@@ -20,30 +25,46 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('✅ Formulario encontrado');
 
   // ===== RESETEAR CHECKBOXES A MEDIANOCHE =====
-function resetCheckboxesAtMidnight() {
-  const lastResetDate = localStorage.getItem('lastResetDate');
-  const today = new Date().toISOString().split('T')[0]; // Formato: YYYY-MM-DD
+//
+  function validateCompletionStatus() {
+    if (!userId) {
+      console.warn('⚠️ No userId found - skipping validation');
+      return;
+    }
 
-  if (lastResetDate !== today) {
-    console.log('🔄 Reseteando hábitos - nuevo día detectado');
-    
-    // Desmarcar todos los checkboxes
-    document.querySelectorAll('.habit-checkbox').forEach(checkbox => {
-      checkbox.checked = false;
-    });
-    
-    // Guardar que ya reseteamos hoy
-    localStorage.setItem('lastResetDate', today);
-    location.reload(); // Opcional: recargar página
+    console.log('🔄 Validando estado de hábitos con backend...');
+
+    fetch(`/api/habits/validate-completion-status/${userId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.completionStatus) {
+          console.log('✅ Estado validado:', data.completionStatus);
+
+          // Update checkboxes based on backend state
+          Object.entries(data.completionStatus).forEach(([habitId, completed]) => {
+            const checkbox = document.querySelector(`.habit-checkbox[data-habit-id="${habitId}"]`);
+            if (checkbox) {
+              checkbox.checked = completed;
+
+              // Update visual state
+              const wrapper = checkbox.closest('.habit-item-wrapper');
+              if (wrapper) {
+                if (completed) {
+                  wrapper.classList.add('completed');
+                } else {
+                  wrapper.classList.remove('completed');
+                }
+              }
+            }
+          });
+
+          console.log('✅ Checkboxes sincronizados con backend');
+        }
+      })
+      .catch(err => {
+        console.error('❌ Error validando estado:', err);
+      });
   }
-}
-
-// Llamar al cargar la página
-resetCheckboxesAtMidnight();
-
-// También verificar cada hora por si acaso
-setInterval(resetCheckboxesAtMidnight, 3600000); // Cada hora
-
 
   // Toggle formulario
   toggleHabitMoreBtn.addEventListener('click', function() {
@@ -131,108 +152,7 @@ setInterval(resetCheckboxesAtMidnight, 3600000); // Cada hora
     });
   });
 
-  // ===== CREAR ÁREA =====
-  const areaNameInput = document.getElementById('areaNameInput');
-  const createAreaBtn = document.getElementById('createAreaBtn');
-  const createAreaModal = document.getElementById('createAreaModal');
-  const modalAreaName = document.getElementById('modalAreaName');
-  const modalAreaDesc = document.getElementById('modalAreaDesc');
-  const saveAreaBtn = document.getElementById('saveAreaBtn');
-  const cancelAreaBtn = document.getElementById('cancelAreaBtn');
-
-  if (createAreaBtn && createAreaModal) {
-    console.log('✅ Elementos de área encontrados');
-
-    createAreaBtn.addEventListener('click', function() {
-      const areaName = areaNameInput.value.trim();
-      
-      console.log('📍 Click en crear área');
-      console.log('📋 Nombre ingresado:', areaName);
-
-      if (!areaName) {
-        alert('Por favor ingresa un nombre para el área');
-        areaNameInput.focus();
-        return;
-      }
-
-      modalAreaName.value = areaName;
-      modalAreaDesc.value = '';
-      
-      createAreaModal.classList.remove('hidden');
-      modalAreaDesc.focus();
-    });
-
-    saveAreaBtn.addEventListener('click', function() {
-      const name = modalAreaName.value.trim();
-      const description = modalAreaDesc.value.trim();
-
-      if (!name) {
-        alert('El nombre del área es requerido');
-        modalAreaName.focus();
-        return;
-      }
-
-      const userId = document.querySelector('body').getAttribute('data-user-id');
-
-      if (!userId) {
-        console.error('❌ userId no encontrado');
-        alert('Error: usuario no identificado');
-        return;
-      }
-
-      const payload = {
-        name: name,
-        description: description,
-        users: {
-          userId: parseInt(userId)
-        }
-      };
-
-      console.log('📤 Enviando área:', payload);
-
-      fetch('/api/areas/createArea', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.error || typeof data === 'string') {
-          console.error('❌ Error:', data);
-          alert('❌ Error: ' + (data.error || data));
-          return;
-        }
-        console.log('✅ Área creada:', data);
-        alert('✅ ¡Área creada exitosamente!');
-        
-        createAreaModal.classList.add('hidden');
-        areaNameInput.value = '';
-        modalAreaName.value = '';
-        modalAreaDesc.value = '';
-        
-        setTimeout(() => location.reload(), 500);
-      })
-      .catch(err => {
-        console.error('❌ Error de red:', err);
-        alert('Error al crear el área');
-      });
-    });
-
-    cancelAreaBtn.addEventListener('click', function() {
-      createAreaModal.classList.add('hidden');
-      modalAreaName.value = '';
-      modalAreaDesc.value = '';
-    });
-
-    createAreaModal.addEventListener('click', function(e) {
-      if (e.target === createAreaModal) {
-        createAreaModal.classList.add('hidden');
-      }
-    });
-  }
-
-  // ===== COMPLETAR HÁBITO =====
-  // ===== COMPLETAR HÁBITO =====
+  // ===== COMPLETAR HABITO =====
   const habitCheckboxes = document.querySelectorAll('.habit-checkbox');
   const completeHabitModal = document.getElementById('completeHabitModal');
   const modalHabitTitle = document.getElementById('modalHabitTitle');
@@ -241,50 +161,27 @@ setInterval(resetCheckboxesAtMidnight, 3600000); // Cada hora
   const cancelCompleteBtn = document.getElementById('cancelCompleteBtn');
 
   let currentHabitId = null;
-  let currentHabitTitle = null;
   let currentCheckbox = null;
-
-  if (!completeHabitModal) {
-    console.warn('⚠️ completeHabitModal no encontrado - esperando que cargue...');
-  }
 
   habitCheckboxes.forEach(checkbox => {
     checkbox.addEventListener('change', function() {
       currentHabitId = this.getAttribute('data-habit-id');
       currentCheckbox = this;
-      
       const wrapper = this.closest('.habit-item-wrapper');
-      if (!wrapper) {
-        console.error('❌ No se encontró .habit-item-wrapper');
-        return;
-      }
-      
       const titleEl = wrapper.querySelector('.habit-title');
-      if (!titleEl) {
-        console.error('❌ No se encontró .habit-title');
-        return;
-      }
-      
-      currentHabitTitle = titleEl.textContent;
-
-      console.log('✅ Checkbox changed - HabitId:', currentHabitId, 'Checked:', this.checked);
 
       if (this.checked) {
-        // ✅ CHECKING - Open modal for note
-        if (!completeHabitModal || !modalHabitTitle || !habitNote) {
-          console.error('❌ Modal elements no encontrados');
-          alert('Error: Modal no cargó correctamente');
+        if (!completeHabitModal) {
+          alert('Modal no encontrado');
           this.checked = false;
           return;
         }
-        
-        modalHabitTitle.textContent = currentHabitTitle;
+        modalHabitTitle.textContent = titleEl.textContent;
         habitNote.value = '';
         completeHabitModal.classList.remove('hidden');
         habitNote.focus();
       } else {
-        // ✅ UNCHECKING - Show confirmation
-        if (confirm('¿Estás seguro? Esto eliminará tu nota y decrementará la racha.')) {
+        if (confirm('Desmarcar habito?')) {
           fetch(`/api/habits/${currentHabitId}/uncomplete`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' }
@@ -292,23 +189,18 @@ setInterval(resetCheckboxesAtMidnight, 3600000); // Cada hora
           .then(res => res.json())
           .then(data => {
             if (data.error) {
-              console.error('❌ Error:', data.error);
-              alert('❌ ' + data.error);
+              alert('Error: ' + data.error);
               this.checked = true;
               return;
             }
-            console.log('✅ Hábito desmarcado:', data);
-            console.log('📊 Nueva racha:', data.streak);
-            alert(`✅ Hábito desmarcado. Racha actual: ${data.streak}`);
+            alert('Habito desmarcado. Racha: ' + data.streak);
             setTimeout(() => location.reload(), 500);
           })
           .catch(err => {
-            console.error('❌ Error:', err);
             this.checked = true;
-            alert('Error al desmarcar el hábito');
+            alert('Error al desmarcar habito');
           });
         } else {
-          // User cancelled - revert checkbox
           this.checked = true;
         }
       }
@@ -318,47 +210,35 @@ setInterval(resetCheckboxesAtMidnight, 3600000); // Cada hora
   if (saveCompleteBtn) {
     saveCompleteBtn.addEventListener('click', function() {
       const note = habitNote.value.trim();
-
       if (!note) {
-        alert('Por favor añade una nota');
-        habitNote.focus();
+        alert('Aniade una nota');
         return;
       }
-
-      const payload = { note: note };
 
       fetch(`/api/habits/${currentHabitId}/complete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ note: note })
       })
       .then(res => res.json())
       .then(data => {
         if (data.error) {
-          console.error('❌ Error:', data.error);
-          
-          // ✅ NEW: Handle already completed
           if (data.alreadyCompleted) {
-            alert('ℹ️ Este hábito ya fue completado hoy');
+            alert('Ya fue completado hoy');
             if (currentCheckbox) currentCheckbox.checked = true;
           } else {
-            alert('❌ Error: ' + data.error);
+            alert('Error: ' + data.error);
             if (currentCheckbox) currentCheckbox.checked = false;
           }
-          
           completeHabitModal.classList.add('hidden');
           return;
         }
-
-        console.log('✅ Hábito completado:', data);
-        alert('✨ ¡Hábito completado! Racha: ' + data.streak);
-
+        alert('Habito completado! Racha: ' + data.streak);
         completeHabitModal.classList.add('hidden');
         setTimeout(() => location.reload(), 800);
       })
       .catch(err => {
-        console.error('❌ Error de red:', err);
-        alert('Error al completar el hábito');
+        alert('Error al completar habito');
         if (currentCheckbox) currentCheckbox.checked = false;
       });
     });
@@ -368,12 +248,7 @@ setInterval(resetCheckboxesAtMidnight, 3600000); // Cada hora
     cancelCompleteBtn.addEventListener('click', function() {
       completeHabitModal.classList.add('hidden');
       habitNote.value = '';
-      
-      // ✅ FIXED: Properly reset checkbox
-      if (currentCheckbox) {
-        currentCheckbox.checked = false;
-      }
-      
+      if (currentCheckbox) currentCheckbox.checked = false;
       currentHabitId = null;
       currentCheckbox = null;
     });
@@ -383,12 +258,255 @@ setInterval(resetCheckboxesAtMidnight, 3600000); // Cada hora
     completeHabitModal.addEventListener('click', function(e) {
       if (e.target === completeHabitModal) {
         this.classList.add('hidden');
-        
-        // ✅ FIXED: Reset checkbox when closing modal
-        if (currentCheckbox && !currentCheckbox.dataset.wasCompleted) {
-          currentCheckbox.checked = false;
-        }
+        if (currentCheckbox) currentCheckbox.checked = false;
       }
     });
   }
+
+ // initAreaMenu();
+  initHabitMenu();
+
 });
+
+// ============================
+// MENU PARA AREAS
+// ============================
+function initAreaMenu() {
+  const editModal = document.getElementById("editAreaModal");
+  const deleteModal = document.getElementById("deleteAreaModal");
+
+  if (!editModal || !deleteModal) return;
+
+  let currentEditId = null;
+  let currentDeleteId = null;
+
+  const editName = document.getElementById("editAreaName");
+  const editDesc = document.getElementById("editAreaDesc");
+  const saveEditBtn = document.getElementById("saveEditAreaBtn");
+  const cancelEditBtn = document.getElementById("cancelEditAreaBtn");
+
+  if (saveEditBtn) {
+    saveEditBtn.addEventListener("click", function() {
+      const name = editName.value.trim();
+      if (!name) {
+        alert("Nombre requerido");
+        return;
+      }
+
+      fetch(`/api/areas/id/${currentEditId}`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ name, description: editDesc.value.trim() })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.error) { alert("Error: " + data.error); return; }
+        alert("Area actualizada");
+        editModal.classList.add("hidden");
+        setTimeout(() => location.reload(), 500);
+      });
+    });
+
+    cancelEditBtn.addEventListener("click", () => editModal.classList.add("hidden"));
+    editModal.addEventListener("click", e => {
+      if (e.target === editModal) editModal.classList.add("hidden");
+    });
+  }
+
+  const confirmDeleteBtn = document.getElementById("confirmDeleteAreaBtn");
+  const cancelDeleteBtn = document.getElementById("cancelDeleteAreaBtn");
+
+  if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener("click", function() {
+      fetch(`/api/areas/id/${currentDeleteId}`, { method: "DELETE" })
+      .then(r => {
+        if (!r.ok) throw new Error();
+        alert("Area eliminada");
+        deleteModal.classList.add("hidden");
+        setTimeout(() => location.reload(), 500);
+      })
+      .catch(() => alert("Error al eliminar area"));
+    });
+
+    cancelDeleteBtn.addEventListener("click", () => deleteModal.classList.add("hidden"));
+    deleteModal.addEventListener("click", e => {
+      if (e.target === deleteModal) deleteModal.classList.add("hidden");
+    });
+  }
+
+  document.querySelectorAll(".area-menu-btn").forEach(btn => {
+    btn.addEventListener("click", function(e) {
+      e.stopPropagation();
+      const areaId = this.getAttribute("data-area-id");
+      const menu = document.getElementById(`areamenu-${areaId}`);
+      document.querySelectorAll(".area-item-menu").forEach(m => {
+        if (m !== menu) m.classList.add("hidden");
+      });
+      menu.classList.toggle("hidden");
+    });
+  });
+
+  document.querySelectorAll(".edit-area-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+      const areaId = this.getAttribute("data-area-id");
+      currentEditId = areaId;
+      const nameEl = document.querySelector(`a[data-area-link="${areaId}"]`);
+      editName.value = nameEl.textContent.trim();
+      editDesc.value = "";
+      const menu = document.getElementById(`areamenu-${areaId}`);
+      if (menu) menu.classList.add("hidden");
+      document.getElementById("editAreaModal").classList.remove("hidden");
+    });
+  });
+
+  document.querySelectorAll(".delete-area-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+      const areaId = this.getAttribute("data-area-id");
+      currentDeleteId = areaId;
+      const menu = document.getElementById(`areamenu-${areaId}`);
+      if (menu) menu.classList.add("hidden");
+      document.getElementById("deleteAreaModal").classList.remove("hidden");
+    });
+  });
+
+  document.addEventListener("click", function(e) {
+    if (!e.target.closest(".area-menu-btn") && !e.target.closest(".area-item-menu")) {
+      document.querySelectorAll(".area-item-menu").forEach(m => m.classList.add("hidden"));
+    }
+  });
+}
+
+// ============================
+// MENU PARA HABITOS
+// ============================
+function initHabitMenu() {
+  const editModal = document.getElementById("editHabitModal");
+  const deleteModal = document.getElementById("deleteHabitModal");
+
+  if (!editModal || !deleteModal) {
+    console.warn("Habit modals no encontrados");
+    return;
+  }
+
+  let currentEditId = null;
+  let currentDeleteId = null;
+
+  const editName = document.getElementById("editHabitName");
+  const editDesc = document.getElementById("editHabitDesc");
+  const editGoal = document.getElementById("editHabitGoal");
+  const editArea = document.getElementById("editHabitArea");
+  const saveEditBtn = document.getElementById("saveEditHabitBtn");
+  const cancelEditBtn = document.getElementById("cancelEditHabitBtn");
+
+  if (saveEditBtn) {
+    saveEditBtn.addEventListener("click", function() {
+      const title = editName.value.trim();
+      const description = editDesc.value.trim();
+      const goal = parseInt(editGoal.value);
+      const areaId = editArea.value ? parseInt(editArea.value) : null;
+
+      if (!title) {
+        alert("Titulo requerido");
+        return;
+      }
+      if (goal < 1) {
+        alert("Meta debe ser mayor a 0");
+        return;
+      }
+
+      const payload = { title, description, goal, areaId };
+
+      fetch(`/api/habits/${currentEditId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.error) {
+          alert("Error: " + data.error);
+          return;
+        }
+        alert("Habito actualizado");
+        editModal.classList.add("hidden");
+        setTimeout(() => location.reload(), 500);
+      })
+      .catch(err => alert("Error al actualizar habito"));
+    });
+
+    cancelEditBtn.addEventListener("click", () => editModal.classList.add("hidden"));
+    editModal.addEventListener("click", e => {
+      if (e.target === editModal) editModal.classList.add("hidden");
+    });
+  }
+
+  const deleteHabitName = document.getElementById("deleteHabitName");
+  const confirmDeleteBtn = document.getElementById("confirmDeleteHabitBtn");
+  const cancelDeleteBtn = document.getElementById("cancelDeleteHabitBtn");
+
+  if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener("click", function() {
+      fetch(`/api/habits/${currentDeleteId}`, { method: "DELETE" })
+      .then(r => {
+        if (!r.ok) throw new Error();
+        alert("Habito eliminado");
+        deleteModal.classList.add("hidden");
+        setTimeout(() => location.reload(), 500);
+      })
+      .catch(err => alert("Error al eliminar habito"));
+    });
+
+    cancelDeleteBtn.addEventListener("click", () => deleteModal.classList.add("hidden"));
+    deleteModal.addEventListener("click", e => {
+      if (e.target === deleteModal) deleteModal.classList.add("hidden");
+    });
+  }
+
+  document.querySelectorAll(".habit-menu-btn").forEach(btn => {
+    btn.addEventListener("click", function(e) {
+      e.stopPropagation();
+      const habitId = this.getAttribute("data-habit-id");
+      const menu = document.getElementById(`habit-menu-${habitId}`);
+      document.querySelectorAll(".habit-menu").forEach(m => {
+        if (m !== menu) m.classList.add("hidden");
+      });
+      menu.classList.toggle("hidden");
+    });
+  });
+
+  document.querySelectorAll(".edit-habit-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+      const habitId = this.getAttribute("data-habit-id");
+      currentEditId = habitId;
+      const wrapper = this.closest(".habit-item-wrapper");
+      const titleEl = wrapper.querySelector(".habit-title");
+      editName.value = titleEl.textContent;
+      editDesc.value = "";
+      editGoal.value = "30";
+      editArea.value = "";
+      const menu = document.getElementById(`habit-menu-${habitId}`);
+      if (menu) menu.classList.add("hidden");
+      editModal.classList.remove("hidden");
+      editName.focus();
+    });
+  });
+
+  document.querySelectorAll(".delete-habit-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+      const habitId = this.getAttribute("data-habit-id");
+      currentDeleteId = habitId;
+      const wrapper = this.closest(".habit-item-wrapper");
+      const titleEl = wrapper.querySelector(".habit-title");
+      deleteHabitName.textContent = titleEl.textContent;
+      const menu = document.getElementById(`habit-menu-${habitId}`);
+      if (menu) menu.classList.add("hidden");
+      deleteModal.classList.remove("hidden");
+    });
+  });
+
+  document.addEventListener("click", function(e) {
+    if (!e.target.closest(".habit-menu-btn") && !e.target.closest(".habit-menu")) {
+      document.querySelectorAll(".habit-menu").forEach(m => m.classList.add("hidden"));
+    }
+  });
+}
